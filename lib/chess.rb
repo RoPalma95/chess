@@ -11,7 +11,7 @@ class Chess
 
   def initialize
     @board = Array.new(8) { Array.new(8) { " " } }
-    @current_player = 'White'
+    @current_player = 'white'
     @selected_piece = []
   end
 
@@ -41,17 +41,22 @@ class Chess
     puts "Which #{piece} would you like to move? (Input its current square)>> "
     position = gets.chomp.upcase
     until valid_init_pos?(piece, position)
-      puts "Please select a square that contains a #{piece}"
+      puts "Please select a square that contains a #{current_player} #{piece}"
       position = gets.chomp.upcase
     end
     @selected_piece << position
+  end
+
+  def change_player
+    @current_player = current_player == 'white' ? 'black' : 'white'
+    @selected_piece.clear
   end
 end
 
 game = Chess.new
 game.set_board
-game.select_piece
-p game.selected_piece
+# game.select_piece
+# p game.selected_piece
 # game.initial_position
 # p game.selected_piece
 # game.board.each do |row|

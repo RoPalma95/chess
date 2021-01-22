@@ -25,9 +25,9 @@ module MoveValidation
     return false if out_of_bounds?(position)
 
     position = translate(position)
-    actual_piece = @board[position[0].to_i][position[1].to_i].class.to_s
+    actual_piece = @board[position[0].to_i][position[1].to_i]
     piece = PIECES[piece]
-    actual_piece == piece
+    actual_piece.class.to_s == piece && actual_piece.color == current_player
   end
 
   private
