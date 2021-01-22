@@ -11,13 +11,14 @@ class Chess
 
   def initialize
     @board = Array.new(8) { Array.new(8) { " " } }
+    @current_player = 'white'
   end
 
   def play_game
   end
 
   def set_board
-    create_pawns
+    create_pieces
   end
 end
 
