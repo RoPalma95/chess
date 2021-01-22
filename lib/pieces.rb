@@ -1,5 +1,9 @@
 
+require_relative '../lib/move_validation'
+
 class Rook
+  include MoveValidation
+  
   attr_reader :color, :position, :moved
 
   def initialize(color, position)
