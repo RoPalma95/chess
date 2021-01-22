@@ -1,8 +1,11 @@
 
-require_relative "/lib/pieces"
-require_relative "/lib/move_validation"
+require_relative '../lib/pieces'
+require_relative '../lib/create_pieces'
+require_relative '../lib/move_validation'
 
 class Chess
+  include CreatePieces
+  include MoveValidation
 
   attr_reader :board
 
@@ -14,9 +17,12 @@ class Chess
   end
 
   def set_board
-    
+    create_pawns
   end
+end
 
-  def create(piece_name)
-  end
+game = Chess.new
+game.set_board
+game.board.each do |row|
+  p row
 end
