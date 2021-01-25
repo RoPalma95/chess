@@ -25,6 +25,8 @@ class Chess
   def make_move
     puts "#{current_player}'s turn. Please select a piece to move >>"
     select_piece
+    puts "Where will you move your #{selected_piece}?>> "
+    new_position = input_position
   end
 
   def select_piece
@@ -47,18 +49,21 @@ class Chess
     @selected_piece << position
   end
 
+  # def input_position
+  #   position = gets.chomp.upcase
+  #   until valid_end_pos?(position, selected_piece[0])
+  #     puts "Please select a valid destination >> "
+  #     position = gets.chomp.upcase
+  #   end
+  # end
+
   def change_player
     @current_player = current_player == 'white' ? 'black' : 'white'
     @selected_piece.clear
   end
 end
 
-game = Chess.new
-game.set_board
+# game = Chess.new
+# game.set_board
 # game.select_piece
 # p game.selected_piece
-# game.initial_position
-# p game.selected_piece
-# game.board.each do |row|
-#   p row
-# end
