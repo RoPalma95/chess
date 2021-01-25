@@ -13,6 +13,12 @@ class Rook
     @moved = false
   end
 
+  def valid_move?(dest)
+    current = @square.split('').map { |element| element.to_i }
+
+    dest[0] == current[0] || dest[1] == current[1]
+  end
+
   def take
   end
 end
@@ -43,7 +49,6 @@ class King < Rook
   def valid_move?(dest)
     # dest is a 2-element array (end = [row, col])
     current = @square.split('').map { |element| element.to_i }
-    p current, dest
     return fwd_bkwd(current, dest) || left_right(current, dest) || diagonal(current, dest)
   end
 
@@ -71,6 +76,5 @@ class Pawn < Rook
   end
 end
 
-king = King.new('white', '74')
-p king.valid_move?([5, 2])
-
+rook = Rook.new('white', '43')
+p rook.valid_move?([6, 4])
