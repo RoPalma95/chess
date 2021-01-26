@@ -116,6 +116,34 @@ class Pawn < Rook
   def initialize(color, square)
     super
   end
+
+  def valid_move?(dest)
+    current = @square.split('').map { |element| element.to_i }
+
+    color == 'white' ? white_move(dest, current) : black_move(dest, current)
+  end
+
+  private
+
+  def white_move(dest, current)
+    if moved && dest[1] == current[1]
+      dest[0] == current[0] - 1
+    elsif !moved && dest[1] == current[1]
+      dest[0] == current[0] - 2 || dest[0] == current[0] - 1
+    else
+      false
+    end
+  end
+
+  def black_move(dest, current)
+    if moved && dest[1] == current[1]
+      dest[0] == current[0] + 1
+    elsif !moved && dest[1] == current[1]
+      dest[0] == current[0] + 2 || dest[0] == current[0] + 1
+    else
+      false
+    end
+  end
 end
 
 # rook = Rook.new('white', '43')
@@ -130,9 +158,12 @@ end
 # bishop = Bishop.new('white', '34')
 # p bishop.valid_move?([7, 7])
 
-queen = Queen.new('white', '00')
-8.times do |i|
-  8.times do |j|
-    puts "[#{i}, #{j}] is valid" if queen.valid_move?([i, j])
-  end
-end
+# queen = Queen.new('white', '00')
+# 8.times do |i|
+#   8.times do |j|
+#     puts "[#{i}, #{j}] is valid" if queen.valid_move?([i, j])
+#   end
+# end
+
+pawn = Pawn.new('black', '14')
+p pawn.valid_move?([1, 5])
