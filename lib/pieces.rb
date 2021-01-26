@@ -89,9 +89,16 @@ class Bishop < Rook
   end
 end
 
+# be careful to change the helper pieces' @square when the queen moves
 class Queen < Rook
   def initialize(color, square)
     super
+    @helper_R = Rook.new(color, square)
+    @helper_B = Bishop.new(color, square)
+  end
+
+  def valid_move?(dest)
+    @helper_R.valid_move?(dest) || @helper_B.valid_move?(dest)
   end
 end
 
@@ -122,3 +129,10 @@ end
 
 # bishop = Bishop.new('white', '34')
 # p bishop.valid_move?([7, 7])
+
+queen = Queen.new('white', '00')
+8.times do |i|
+  8.times do |j|
+    puts "[#{i}, #{j}] is valid" if queen.valid_move?([i, j])
+  end
+end
