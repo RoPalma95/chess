@@ -42,31 +42,24 @@ class Queen < Rook
 end
 
 class King < Rook
+
+  POSSIBLE_X = [-1, 1, 0, 0, -1, 1, -1, 1]
+  POSSIBLE_Y = [0, 0, -1, 1, 1, 1, -1, -1]
+
   def initialize(color, square)
     super
   end
 
-  def valid_move?(dest)
-    # dest is a 2-element array (end = [row, col])
-    current = @square.split('').map { |element| element.to_i }
-    return fwd_bkwd(current, dest) || left_right(current, dest) || diagonal(current, dest)
-  end
+  def valid_move?(dest, possible = [])
+    current =  @square.split('').map { |element| element.to_i }
+    POSSIBLE_X.length.times do |i|
+      possible << current[0] + POSSIBLE_X[i]
+      possible << current[1] + POSSIBLE_Y[i]
+      return true if possible == dest
 
-  private
-
-  def fwd_bkwd(start, finish)
-    (finish[0] == start[0] + 1 || finish[0] == start[0] - 1) && finish[1] == start[1]
-  end
-
-  def left_right(start, finish)
-    finish[0] == start[0] && (finish[1] == start[1] + 1 || finish[1] == start[1] - 1)
-  end
-
-  def diagonal(start, finish)
-    (finish[0] == start[0] + 1 && finish[1] == start[1] + 1) ||
-    (finish[0] == start[0] + 1 && finish[1] == start[1] - 1) ||
-    (finish[0] == start[0] - 1 && finish[1] == start[1] - 1) ||
-    (finish[0] == start[0] - 1 && finish[1] == start[1] + 1)
+      possible.clear
+    end
+    false
   end
 end
 
@@ -76,5 +69,8 @@ class Pawn < Rook
   end
 end
 
-rook = Rook.new('white', '43')
-p rook.valid_move?([6, 4])
+# rook = Rook.new('white', '43')
+# p rook.valid_move?([6, 4])
+
+king = King.new('white', '44')
+p king.valid_move?([6, 4])
