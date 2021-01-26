@@ -1,5 +1,6 @@
 
 require_relative '../lib/move_validation'
+require 'pry'
 
 class Rook
   include MoveValidation
@@ -16,9 +17,6 @@ class Rook
   def valid_move?(dest)
     current = @square.split('').map { |element| element.to_i }
     dest[0] == current[0] || dest[1] == current[1]
-  end
-
-  def take
   end
 end
 
@@ -47,6 +45,47 @@ end
 class Bishop < Rook
   def initialize(color, square)
     super
+  end
+
+  def valid_move?(dest)
+    current = @square.split('').map { |element| element.to_i }
+    ltr_diagonal(dest, current) || rtl_diagonal(dest, current)
+  end
+
+  private
+
+  def ltr_diagonal(dest, current, possible = current.dup)
+    until possible[0].negative? || possible[1].negative?
+      possible[0] = possible[0] - 1
+      possible[1] = possible[1] - 1
+      return true if possible == dest
+    end
+
+    possible = current.dup
+
+    until possible[0] > 7 || possible[1] > 7
+      possible[0] = possible[0] + 1
+      possible[1] = possible[1] + 1
+      return true if possible == dest
+    end
+    false
+  end
+
+  def rtl_diagonal(dest, current, possible = current.dup)
+    until possible[0].negative? || possible[1] > 7
+      possible[0] = possible[0] - 1
+      possible[1] = possible[1] + 1
+      return true if possible == dest
+    end
+
+    possible = current.dup
+
+    until possible[0] > 7 || possible[1].negative?
+      possible[0] = possible[0] + 1
+      possible[1] = possible[1] - 1
+      return true if possible == dest
+    end
+    false
   end
 end
 
@@ -80,3 +119,6 @@ end
 
 # knight = Knight.new('white', '34')
 # p knight.valid_move?([4, 4])
+
+# bishop = Bishop.new('white', '34')
+# p bishop.valid_move?([7, 7])
