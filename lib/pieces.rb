@@ -1,22 +1,52 @@
 
-require_relative '../lib/move_validation'
 require 'pry'
 
-class Rook
-  include MoveValidation
-  
+class Rook  
   attr_reader :color, :square, :moved
 
   def initialize(color, square)
-    #square is a 2-digit string ("rowcol")
+    #square is a 2-element array [row, col]
     @color = color
     @square = square
     @moved = false
   end
 
-  def valid_move?(dest)
-    current = @square.split('').map { |element| element.to_i }
-    dest[0] == current[0] || dest[1] == current[1]
+  def valid_move?(dest, board)
+    valid_square?(dest) && empty_path(dest, board)
+  end
+
+  def valid_square?(dest)
+    dest[0] == @square[0] || dest[1] == @square[1]
+  end
+
+  def empty_path?(dest, board)
+    dest_row, dest_col = dest
+    current_row, current_col = @square
+    if dest_col == current_col # rook moves vertically
+      vertical_path(current_row, dest_row, current_col, board)
+    else # rook moves horizontally
+      horizontal_path(current_col, dest_col, current_row, board)
+    end
+  end
+
+  private
+
+  def vertical_path(row, dest_row, current_col, board)
+    until row == dest_row
+      return false unless board[row][current_col].empty?
+
+      row = row > dest_row ? row - 1 : row + 1
+    end
+    true
+  end
+
+  def horizontal_path(col, dest_col, current_row, board)
+    until col == dest_col
+      return false unless board[current_row][col].empty?
+
+      col = col > dest_col ? col - 1 : col + 1
+    end
+    true
   end
 end
 
@@ -30,7 +60,9 @@ class Knight < Rook
   end
 
   def valid_move?(dest, possible = [])
-    current = @square.split('').map { |element| element.to_i }
+    current = @square.dup
+    possible.clear
+
     8.times do |i|
       possible << current[0] + self.class::POSSIBLE_X[i]
       possible << current[1] + self.class::POSSIBLE_Y[i]
@@ -48,7 +80,7 @@ class Bishop < Rook
   end
 
   def valid_move?(dest)
-    current = @square.split('').map { |element| element.to_i }
+    current = @square.dup
     ltr_diagonal(dest, current) || rtl_diagonal(dest, current)
   end
 
@@ -117,8 +149,8 @@ class Pawn < Rook
     super
   end
 
-  def valid_move?(dest)
-    current = @square.split('').map { |element| element.to_i }
+  def valid_move?(dest*)
+    current = @square.dup
 
     color == 'white' ? white_move(dest, current) : black_move(dest, current)
   end
@@ -146,24 +178,24 @@ class Pawn < Rook
   end
 end
 
-# rook = Rook.new('white', '43')
-# p rook.valid_move?([6, 4])
+# rook = Rook.new('white', [4, 3])
+# p rook.valid_move?([4, 7])
 
-# king = King.new('white', '44')
-# p king.valid_move?([2, 4])
+# king = King.new('white', [4, 4])
+# p king.valid_move?([3, 3])
 
-# knight = Knight.new('white', '34')
-# p knight.valid_move?([4, 4])
+# knight = Knight.new('white', [3, 4])
+# p knight.valid_move?([1, 5])
 
-# bishop = Bishop.new('white', '34')
-# p bishop.valid_move?([7, 7])
+# bishop = Bishop.new('white', [3, 4])
+# p bishop.valid_move?([5, 6])
 
-# queen = Queen.new('white', '00')
+# queen = Queen.new('white', [0, 0])
 # 8.times do |i|
 #   8.times do |j|
 #     puts "[#{i}, #{j}] is valid" if queen.valid_move?([i, j])
 #   end
 # end
 
-pawn = Pawn.new('black', '14')
-p pawn.valid_move?([1, 5])
+# pawn = Pawn.new('black', [1, 4])
+# p pawn.valid_move?([2, 4])
