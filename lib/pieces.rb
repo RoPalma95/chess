@@ -260,11 +260,11 @@ end
 
 board = Array.new(8) { Array.new(8) { [] } }
 
-board[1][1] = 'Not empty'
+board[3][2] = 'Not empty'
 
 # board.each do |row|
 #   row.each { |square| p "[#{board.index(row)}, #{row.index(square)}] not empty" unless square.empty? }
 # end
 
-bishop = Bishop.new('white', [3, 3])
-p bishop.valid_move?([0, 0], board)
+queen = Queen.new('white', [3, 3])
+p queen.valid_move?([3, 0], board)
