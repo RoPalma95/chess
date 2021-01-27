@@ -12,7 +12,7 @@ class Rook
   end
 
   def valid_move?(dest, board)
-    valid_square?(dest) && empty_path(dest, board)
+    valid_square?(dest) && empty_path?(dest, board)
   end
 
   def valid_square?(dest)
@@ -79,9 +79,27 @@ class Bishop < Rook
     super
   end
 
-  def valid_move?(dest)
+  def valid_move?(dest, board)
+    valid_square?(dest) && empty_path?(dest, board)
+  end
+
+  def valid_square?(dest)
     current = @square.dup
     ltr_diagonal(dest, current) || rtl_diagonal(dest, current)
+  end
+
+  def empty_path?(dest, board)
+    dest_row, dest_col = dest
+    current_row, current_col = @square
+    if dest_row < current_row && dest_col < current_col # bishop moves up ltr
+      ltr_up(current_row, current_col, dest_row, board)
+    elsif dest_row > current_row && dest_col > current_col # bishop moves down ltr
+      ltr_down(current_row, current_col, dest_row, board)
+    elsif dest_row < current_row && dest_col > current_col # bishop moves up rtl
+      rtl_up(current_row, current_col, dest_row, board)
+    elsif dest_row > current_row && dest_col < current_col # bishop moves down rtl
+      rtl_down(current_row, current_col, dest_row, board)
+    end
   end
 
   private
@@ -119,6 +137,46 @@ class Bishop < Rook
     end
     false
   end
+
+  def ltr_up(row, col, dest_row, board)
+    until row == dest_row
+      return false unless board[row][col].empty?
+
+      row -= 1
+      col -= 1
+    end
+    true
+  end
+
+  def ltr_down(row, col, dest_row, board)
+    until row == dest_row
+      return false unless board[row][col].empty?
+
+      row += 1
+      col += 1
+    end
+    true
+  end
+
+  def rtl_up(row, col, dest_row, board)
+    until row == dest_row
+      return false unless board[row][col].empty?
+
+      row -= 1
+      col += 1
+    end
+    true
+  end
+
+  def rtl_down(row, col, dest_row, board)
+    until row == dest_row
+      return false unless board[row][col].empty?
+
+      row += 1
+      col -= 1
+    end
+    true
+  end
 end
 
 # be careful to change the helper pieces' @square when the queen moves
@@ -129,8 +187,8 @@ class Queen < Rook
     @helper_B = Bishop.new(color, square)
   end
 
-  def valid_move?(dest)
-    @helper_R.valid_move?(dest) || @helper_B.valid_move?(dest)
+  def valid_move?(dest, board)
+    @helper_R.valid_move?(dest, board) || @helper_B.valid_move?(dest, board)
   end
 end
 
@@ -149,7 +207,7 @@ class Pawn < Rook
     super
   end
 
-  def valid_move?(dest*)
+  def valid_move?(dest)
     current = @square.dup
 
     color == 'white' ? white_move(dest, current) : black_move(dest, current)
@@ -199,3 +257,14 @@ end
 
 # pawn = Pawn.new('black', [1, 4])
 # p pawn.valid_move?([2, 4])
+
+board = Array.new(8) { Array.new(8) { [] } }
+
+board[1][1] = 'Not empty'
+
+# board.each do |row|
+#   row.each { |square| p "[#{board.index(row)}, #{row.index(square)}] not empty" unless square.empty? }
+# end
+
+bishop = Bishop.new('white', [3, 3])
+p bishop.valid_move?([0, 0], board)
