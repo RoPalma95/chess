@@ -55,10 +55,6 @@ class Knight < Rook
   POSSIBLE_X = [2, 2, -2, -2, 1, 1, -1, -1].freeze
   POSSIBLE_Y = [-1, 1, 1, -1, 2, -2, 2, -2].freeze
 
-  def initialize(color, square)
-    super
-  end
-
   def valid_move?(dest, possible = [])
     current = @square.dup
     possible.clear
@@ -75,9 +71,6 @@ class Knight < Rook
 end
 
 class Bishop < Rook
-  def initialize(color, square)
-    super
-  end
 
   def valid_move?(dest, board)
     valid_square?(dest) && empty_path?(dest, board)
@@ -196,16 +189,9 @@ class King < Knight
 
   POSSIBLE_X = [-1, 1, 0, 0, -1, 1, -1, 1].freeze
   POSSIBLE_Y = [0, 0, -1, 1, 1, 1, -1, -1].freeze
-
-  def initialize(color, square)
-    super
-  end
 end
 
 class Pawn < Rook
-  def initialize(color, square)
-    super
-  end
 
   def valid_move?(dest)
     current = @square.dup
