@@ -10,7 +10,7 @@ class Chess
   attr_reader :board, :current_player, :selected_piece
 
   def initialize
-    @board = Array.new(8) { Array.new(8) { " " } }
+    @board = Array.new(8) { Array.new(8) }
     @current_player = 'white'
     @selected_piece = []
   end
@@ -36,7 +36,7 @@ class Chess
       piece = gets.chomp.upcase
     end
     @selected_piece << piece
-    initial_position(piece) unless ['Q', 'K'].include?(piece)
+    initial_position(piece)
   end
 
   def initial_position(piece)
@@ -49,13 +49,14 @@ class Chess
     @selected_piece << position
   end
 
-  # def input_position
-  #   position = gets.chomp.upcase
-  #   until valid_end_pos?(position, selected_piece[0])
-  #     puts "Please select a valid destination >> "
-  #     position = gets.chomp.upcase
-  #   end
-  # end
+  def input_position
+    position = gets.chomp.upcase
+    until valid_end_pos?(position)
+      puts "Please select a valid destination >> "
+      position = gets.chomp.upcase
+    end
+    position
+  end
 
   def change_player
     @current_player = current_player == 'white' ? 'black' : 'white'
@@ -63,7 +64,9 @@ class Chess
   end
 end
 
-# game = Chess.new
-# game.set_board
+game = Chess.new
+game.set_board
+game.select_piece
+p game.input_position
 # game.select_piece
 # p game.selected_piece

@@ -32,19 +32,18 @@ class Rook
   private
 
   def vertical_path(row, dest_row, current_col, board)
+    # binding.pry
     until row == dest_row
-      return false unless board[row][current_col].empty?
-
       row = row > dest_row ? row - 1 : row + 1
+      return false unless board[row][current_col].nil?
     end
     true
   end
 
   def horizontal_path(col, dest_col, current_row, board)
     until col == dest_col
-      return false unless board[current_row][col].empty?
-
       col = col > dest_col ? col - 1 : col + 1
+      return false unless board[current_row][col].nil?
     end
     true
   end
@@ -56,6 +55,7 @@ class Knight < Rook
   POSSIBLE_Y = [-1, 1, 1, -1, 2, -2, 2, -2].freeze
 
   def valid_move?(dest, possible = [])
+    # binding.pry
     current = @square.dup
     possible.clear
 
@@ -133,40 +133,36 @@ class Bishop < Rook
 
   def ltr_up(row, col, dest_row, board)
     until row == dest_row
-      return false unless board[row][col].empty?
-
       row -= 1
       col -= 1
+      return false unless board[row][col].nil?
     end
     true
   end
 
   def ltr_down(row, col, dest_row, board)
     until row == dest_row
-      return false unless board[row][col].empty?
-
       row += 1
       col += 1
+      return false unless board[row][col].nil?
     end
     true
   end
 
   def rtl_up(row, col, dest_row, board)
     until row == dest_row
-      return false unless board[row][col].empty?
-
       row -= 1
       col += 1
+      return false unless board[row][col].nil?
     end
     true
   end
 
   def rtl_down(row, col, dest_row, board)
     until row == dest_row
-      return false unless board[row][col].empty?
-
       row += 1
       col -= 1
+      return false unless board[row][col].nil?
     end
     true
   end
@@ -222,11 +218,10 @@ class Pawn < Rook
   end
 end
 
-# rook = Rook.new('white', [4, 3])
-# p rook.valid_move?([4, 7])
 
-# king = King.new('white', [4, 4])
-# p king.valid_move?([3, 3])
+
+# king = King.new('white', [3, 3])
+# p king.valid_move?([1, 4])
 
 # knight = Knight.new('white', [3, 4])
 # p knight.valid_move?([1, 5])
@@ -244,9 +239,9 @@ end
 # pawn = Pawn.new('black', [1, 4])
 # p pawn.valid_move?([2, 4])
 
-# board = Array.new(8) { Array.new(8) { [] } }
+board = Array.new(8) { Array.new(8) { [] } }
 
-# board[3][2] = 'Not empty'
+board[3][2] = 'Not empty'
 
 # board.each do |row|
 #   row.each { |square| p "[#{board.index(row)}, #{row.index(square)}] not empty" unless square.empty? }
@@ -254,3 +249,6 @@ end
 
 # queen = Queen.new('white', [3, 3])
 # p queen.valid_move?([3, 0], board)
+
+# rook = Rook.new('white', [4, 3])
+# p rook.valid_move?([4, 7])

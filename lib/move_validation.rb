@@ -30,13 +30,20 @@ module MoveValidation
     actual_piece.class.to_s == piece && actual_piece.color == current_player
   end
 
-  def valid_end_pos?(position, piece)
+  def valid_end_pos?(position)
     # first checks if pos is out of bounds
     return false if out_of_bounds?(position)
 
-    position = translate(position)
+    end_position = translate(position)
+    current_pos = translate(@selected_piece[1])
+    piece = @board[current_pos[0]][current_pos[1]]
     # second passes the position to the piece to check if it's a valid move
-    return false unless piece.valid_move?(position)
+    if %w[R B Q].include?(@selected_piece[0])
+      return false unless piece.valid_move?(end_position, @board)
+    else
+      return false unless piece.valid_move?(end_position)
+    end
+    true
     # third checks the status of the king, asks for new input if king is in check
     # if all three tests pass, then end position is valid
   end
