@@ -258,13 +258,13 @@ end
 # pawn = Pawn.new('black', [1, 4])
 # p pawn.valid_move?([2, 4])
 
-board = Array.new(8) { Array.new(8) { [] } }
+# board = Array.new(8) { Array.new(8) { [] } }
 
-board[3][2] = 'Not empty'
+# board[3][2] = 'Not empty'
 
 # board.each do |row|
 #   row.each { |square| p "[#{board.index(row)}, #{row.index(square)}] not empty" unless square.empty? }
 # end
 
-queen = Queen.new('white', [3, 3])
-p queen.valid_move?([3, 0], board)
+# queen = Queen.new('white', [3, 3])
+# p queen.valid_move?([3, 0], board)
