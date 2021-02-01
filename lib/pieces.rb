@@ -32,18 +32,21 @@ class Rook
   private
 
   def vertical_path(row, dest_row, current_col, board)
-    # binding.pry
+    row = row > dest_row ? row - 1 : row + 1
     until row == dest_row
-      row = row > dest_row ? row - 1 : row + 1
       return false unless board[row][current_col].nil?
+
+      row = row > dest_row ? row - 1 : row + 1
     end
     true
   end
 
   def horizontal_path(col, dest_col, current_row, board)
+    col = col > dest_col ? col - 1 : col + 1
     until col == dest_col
-      col = col > dest_col ? col - 1 : col + 1
       return false unless board[current_row][col].nil?
+
+      col = col > dest_col ? col - 1 : col + 1
     end
     true
   end
@@ -132,37 +135,49 @@ class Bishop < Rook
   end
 
   def ltr_up(row, col, dest_row, board)
+    row -= 1
+    col -= 1
     until row == dest_row
+      return false unless board[row][col].nil?
+
       row -= 1
       col -= 1
-      return false unless board[row][col].nil?
     end
     true
   end
 
   def ltr_down(row, col, dest_row, board)
+    row += 1
+    col += 1
     until row == dest_row
+      return false unless board[row][col].nil?
+
       row += 1
       col += 1
-      return false unless board[row][col].nil?
     end
     true
   end
 
   def rtl_up(row, col, dest_row, board)
+    row -= 1
+    col += 1
     until row == dest_row
+      return false unless board[row][col].nil?
+
       row -= 1
       col += 1
-      return false unless board[row][col].nil?
     end
     true
   end
 
   def rtl_down(row, col, dest_row, board)
+    row += 1
+    col -= 1
     until row == dest_row
+      return false unless board[row][col].nil?
+
       row += 1
       col -= 1
-      return false unless board[row][col].nil?
     end
     true
   end

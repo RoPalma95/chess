@@ -8,6 +8,7 @@ class Chess
   include MoveValidation
 
   attr_reader :board, :current_player, :selected_piece
+  attr_writer :board
 
   def initialize
     @board = Array.new(8) { Array.new(8) }
@@ -23,10 +24,11 @@ class Chess
   end
 
   def make_move
-    puts "#{current_player}'s turn. Please select a piece to move >>"
+    puts "#{current_player.upcase}'s turn. Please select a piece to move >>"
     select_piece
-    puts "Where will you move your #{selected_piece}?>> "
+    puts "Where will you move your #{selected_piece.join('')}? >> "
     new_position = input_position
+    # update_board(new_position)
   end
 
   def select_piece
@@ -58,6 +60,9 @@ class Chess
     position
   end
 
+  # def update_board(position)
+  # end
+
   def change_player
     @current_player = current_player == 'white' ? 'black' : 'white'
     @selected_piece.clear
@@ -66,7 +71,7 @@ end
 
 game = Chess.new
 game.set_board
-game.select_piece
-p game.input_position
+game.board[4][6] = Pawn.new('black', [4, 6])
+p game.make_move
 # game.select_piece
 # p game.selected_piece
