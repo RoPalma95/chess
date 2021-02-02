@@ -47,7 +47,8 @@ module CheckMate
   end
 
   def check_diagonals(king)
-    check_ltr([king[0] - 1, king[1] - 1], [king[0] + 1, king[1] + 1])
+    check_ltr([king[0] - 1, king[1] - 1], [king[0] + 1, king[1] + 1]) ||
+    check_rtl([king[0] - 1, king[1] + 1], [king[0] + 1, king[1] - 1])
   end
 
   def check_ltr(ltr_up, ltr_down)
@@ -61,6 +62,20 @@ module CheckMate
       return true if [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class) && @board[ltr_down[0]][ltr_down[1]].color != @current_player
 
       ltr_down.map! { |element| element + 1}
+    end
+  end
+
+  def check_rtl(rtl_up, rtl_down)
+    until rtl_up[0].negative? || rtl_up[1] > 7
+      return true if [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class) && @board[rtl_up[0]][rtl_up[1]].color != @current_player
+
+      rtl_up = [rtl_up[0] - 1, rtl_up[1] + 1]
+    end
+
+    until rtl_down[0] > 7 || rtl_down[1].negative?
+      return true if [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class) && @board[rtl_down[0]][rtl_down[1]].color != @current_player
+
+      rtl_down = [rtl_down[0] + 1, rtl_down[1] - 1]
     end
   end
 end
