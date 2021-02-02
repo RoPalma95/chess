@@ -2,10 +2,12 @@
 require_relative '../lib/pieces'
 require_relative '../lib/create_pieces'
 require_relative '../lib/move_validation'
+require_relative '../lib/checkmate'
 
 class Chess
   include CreatePieces
   include MoveValidation
+  include CheckMate
 
   attr_reader :board, :current_player, :selected_piece, :white_king, :black_king
   attr_writer :board, :white_king
@@ -76,7 +78,7 @@ game.set_board
 game.board[7][4] = nil
 game.board[3][3] = King.new('white', [3, 3])
 game.white_king = [3, 3]
-game.board[3][5] = Rook.new('black', [3, 5])
+game.board[4][0] = Bishop.new('black', [4, 0])
 # game.board.each { |row| p row }
-p "King is in check" if game.check?
+puts "#{game.current_player.capitalize} King is in check." if game.check?
 # p game.make_move
