@@ -7,13 +7,15 @@ class Chess
   include CreatePieces
   include MoveValidation
 
-  attr_reader :board, :current_player, :selected_piece
-  attr_writer :board
+  attr_reader :board, :current_player, :selected_piece, :white_king, :black_king
+  attr_writer :board, :white_king
 
   def initialize
     @board = Array.new(8) { Array.new(8) }
     @current_player = 'white'
     @selected_piece = []
+    @white_king = []
+    @black_king = []
   end
 
   def play_game
@@ -28,7 +30,6 @@ class Chess
     select_piece
     puts "Where will you move your #{selected_piece.join('')}? >> "
     new_position = input_position
-    # update_board(new_position)
   end
 
   def select_piece
@@ -60,6 +61,7 @@ class Chess
     position
   end
 
+  
   # def update_board(position)
   # end
 
@@ -71,7 +73,10 @@ end
 
 game = Chess.new
 game.set_board
-game.board[4][6] = Pawn.new('black', [4, 6])
-p game.make_move
-# game.select_piece
-# p game.selected_piece
+game.board[7][4] = nil
+game.board[3][3] = King.new('white', [3, 3])
+game.white_king = [3, 3]
+game.board[3][5] = Rook.new('black', [3, 5])
+# game.board.each { |row| p row }
+p "King is in check" if game.check?
+# p game.make_move

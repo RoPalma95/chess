@@ -47,14 +47,9 @@ module MoveValidation
     end
 
     # 3. checks if the destination square can be taken
-    return false unless can_take?(end_position)
+    can_take?(end_position)
 
-    # 4. checks the status of the king, asks for new input if king is in check
-    # if all four tests pass, then end position is valid
-  end
-
-  def check?
-    
+    # if all 3 tests pass, then end position is valid
   end
 
   private
