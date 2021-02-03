@@ -56,6 +56,11 @@ module MoveValidation
     # if all 3 tests pass, then end position is valid
   end
 
+  def can_take?(dest)
+    dest_content = @board[dest[0]][dest[1]]
+    return (dest_content.nil? || dest_content.color != @current_player) ? true : false
+  end
+
   private
 
   def translate(position)
@@ -64,10 +69,5 @@ module MoveValidation
     position[0] = (8 - position[0].to_i) 
     position[1] = COL_LETTERS.index(position[1])
     position
-  end
-
-  def can_take?(dest)
-    dest_content = @board[dest[0]][dest[1]]
-    return (dest_content.nil? || dest_content.color != @current_player) ? true : false
   end
 end

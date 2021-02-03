@@ -117,7 +117,7 @@ module Mate
     @board[king_square[0]][king_square[1]] = nil
 
     if_king_moves?(king)
-      # can_king_take?(king) || can_someone_block?(king)
+    #  || can_someone_block?(king)
   end
 
   private
@@ -125,12 +125,12 @@ module Mate
   def if_king_moves?(king, possible = [@white_king, @black_king])
     test_square = king.square
     k = king.color == 'white' ? 0 : 1
-
+    # binding.pry
     8.times do |i|
       possible[k].clear << test_square[0] + King::POSSIBLE_X[i]
       possible[k] << test_square[1] + King::POSSIBLE_Y[i]
-      
-      if !out_of_bounds?(possible[k]) && king.valid_move?(possible[k])
+
+      if !out_of_bounds?(possible[k]) && king.valid_move?(possible[k]) && can_take?(possible[k])
         unless check?
           possible[k].clear << king.square[0] << king.square[1]
           return false

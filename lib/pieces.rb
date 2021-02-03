@@ -58,7 +58,6 @@ class Knight < Rook
   POSSIBLE_Y = [-1, 1, 1, -1, 2, -2, 2, -2].freeze
 
   def valid_move?(dest, possible = [])
-    # binding.pry
     current = @square.dup
 
     8.times do |i|
