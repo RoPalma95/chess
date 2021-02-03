@@ -60,14 +60,12 @@ class Knight < Rook
   def valid_move?(dest, possible = [])
     # binding.pry
     current = @square.dup
-    possible.clear
 
     8.times do |i|
-      possible << current[0] + self.class::POSSIBLE_X[i]
+      possible.clear << current[0] + self.class::POSSIBLE_X[i]
       possible << current[1] + self.class::POSSIBLE_Y[i]
       return true if possible == dest
 
-      possible.clear
     end
     false
   end
