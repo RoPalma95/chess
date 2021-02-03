@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
-module CheckMate
+require 'pry'
+require_relative '../lib/pieces'
+require_relative '../lib/move_validation'
+
+module Check
 
   TEST_X = [-2, -2, 2, 2].freeze
   TEST_Y = [-1, 1, -1, 1].freeze
@@ -101,5 +105,39 @@ module CheckMate
       return true if @board[possible[0]][possible[1]].class == Knight && @board[possible[0]][possible[1]].color != @current_player
     end
     false
+  end
+end
+
+module Mate
+  include MoveValidation
+
+  def checkmate?
+    king_square = @current_player == 'white' ? @white_king : @black_king
+    king = @board[king_square[0]][king_square[1]]
+    @board[king_square[0]][king_square[1]] = nil
+
+    if_king_moves?(king)
+      # can_king_take?(king) || can_someone_block?(king)
+  end
+
+  private
+
+  def if_king_moves?(king, possible = [@white_king, @black_king])
+    test_square = king.square
+    k = king.color == 'white' ? 0 : 1
+
+    8.times do |i|
+      possible[k].clear << test_square[0] + King::POSSIBLE_X[i]
+      possible[k] << test_square[1] + King::POSSIBLE_Y[i]
+      
+      if !out_of_bounds?(possible[k]) && king.valid_move?(possible[k])
+        unless check?
+          possible[k].clear << king.square[0] << king.square[1]
+          return false
+        end
+      end
+    end
+    possible[k].clear << king.square[0] << king.square[1]
+    true
   end
 end

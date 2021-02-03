@@ -232,38 +232,3 @@ class Pawn < Rook
     end
   end
 end
-
-
-
-# king = King.new('white', [3, 3])
-# p king.valid_move?([1, 4])
-
-# knight = Knight.new('white', [3, 4])
-# p knight.valid_move?([1, 5])
-
-# bishop = Bishop.new('white', [3, 4])
-# p bishop.valid_move?([5, 6])
-
-# queen = Queen.new('white', [0, 0])
-# 8.times do |i|
-#   8.times do |j|
-#     puts "[#{i}, #{j}] is valid" if queen.valid_move?([i, j])
-#   end
-# end
-
-# pawn = Pawn.new('black', [1, 4])
-# p pawn.valid_move?([2, 4])
-
-board = Array.new(8) { Array.new(8) { [] } }
-
-board[3][2] = 'Not empty'
-
-# board.each do |row|
-#   row.each { |square| p "[#{board.index(row)}, #{row.index(square)}] not empty" unless square.empty? }
-# end
-
-# queen = Queen.new('white', [3, 3])
-# p queen.valid_move?([3, 0], board)
-
-# rook = Rook.new('white', [4, 3])
-# p rook.valid_move?([4, 7])

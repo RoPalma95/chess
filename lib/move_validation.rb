@@ -19,7 +19,11 @@ module MoveValidation
 
   def out_of_bounds?(position)
     # position is in CHESS NOTATION
-    !(COL_LETTERS.include?(position[0]) && position[1].to_i.between?(1, 8))
+    if position[0].class == String
+      return !(COL_LETTERS.include?(position[0]) && position[1].to_i.between?(1, 8))
+    else
+      return !(position.all? { |e| e.between?(0, 7) })
+    end
   end
 
   def valid_init_pos?(piece, position)

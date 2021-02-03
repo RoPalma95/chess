@@ -6,11 +6,11 @@ module CreatePieces
   # POSITIONS = %w[Rook Knight Bishop Queen King Bishop Knight Rook].freeze
 
   def create_pieces
-    # create_pawns
-    # create_rooks
-    # create_knights
-    # create_bishops
-    # create_queens
+    create_pawns
+    create_rooks
+    create_knights
+    create_bishops
+    create_queens
     create_kings
   end
 

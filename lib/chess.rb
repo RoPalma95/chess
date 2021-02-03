@@ -7,7 +7,8 @@ require_relative '../lib/checkmate'
 class Chess
   include CreatePieces
   include MoveValidation
-  include CheckMate
+  include Check
+  include Mate
 
   attr_reader :board, :current_player, :selected_piece, :white_king, :black_king
   attr_writer :board, :white_king
@@ -74,12 +75,22 @@ class Chess
 end
 
 game = Chess.new
-game.set_board
-game.board[7][4] = nil
+# game.set_board
+# game.board[7][4] = nil
 game.board[3][3] = King.new('white', [3, 3])
 game.white_king = [3, 3]
-game.board[3][4] = Knight.new('black', [3, 4])
+game.board[6][1] = Knight.new('black', [6, 1])
+game.board[1][5] = Knight.new('black', [1, 5])
+game.board[3][1] = Rook.new('black', [3, 1])
+game.board[6][3] = Rook.new('black', [6, 3])
+game.board[3][5] = Rook.new('black', [3, 5])
+game.board[1][1] = Queen.new('white', [1, 1])
+game.board[2][5] = Queen.new('black', [2, 5])
+game.board[7][7] = Bishop.new('white', [7, 7])
+
 # game.board.each { |row| p row }
 
-puts game.check? ? "#{game.current_player.capitalize} King IS in check." : "#{game.current_player.capitalize} King IS NOT in check"
-# p game.make_move
+# puts game.check? ? "#{game.current_player.capitalize} King IS in check." : "#{game.current_player.capitalize} King IS NOT in check"
+p game.checkmate?
+p game.white_king
+# game.board.each { |row| p row }
