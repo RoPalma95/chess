@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
 module CheckMate
+
+  TEST_X = [-2, -2, 2, 2].freeze
+  TEST_Y = [-1, 1, -1, 1].freeze
+
   def check?
     king = @current_player == 'white' ? @white_king : @black_king
     # 1. check if there are any opposing rooks or queens in the same
     # row or column as the king
     check_horizontal(king[0], king[1] - 1, king[1] + 1) ||
-    check_vertical(king[1], king[0] - 1, king[0] + 1) ||
-    # 2. check if there are any opposing bishops or queens in the same
-    # diagonals as the king
-    check_diagonals(king)
+      check_vertical(king[1], king[0] - 1, king[0] + 1) ||
+      # 2. check if there are any opposing bishops or queens in the same
+      # diagonals as the king
+      check_diagonals(king) ||
     # 3. check if the king can be taken by an opposing knight
-    # safe_kingts(king_row, king_col)
+      check_knights(king[0], king[1])
   end
 
   private
@@ -48,34 +52,54 @@ module CheckMate
 
   def check_diagonals(king)
     check_ltr([king[0] - 1, king[1] - 1], [king[0] + 1, king[1] + 1]) ||
-    check_rtl([king[0] - 1, king[1] + 1], [king[0] + 1, king[1] - 1])
+      check_rtl([king[0] - 1, king[1] + 1], [king[0] + 1, king[1] - 1])
   end
 
   def check_ltr(ltr_up, ltr_down)
-    until ltr_up.any? { |e| e.negative? }
-      return true if [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class) && @board[ltr_up[0]][ltr_up[1]].color != @current_player
+    until ltr_up.any?(&:negative?)
+      if [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class) && @board[ltr_up[0]][ltr_up[1]].color != @current_player
+        return true
+      end
 
-      ltr_up.map! { |element| element - 1}
+      ltr_up.map! { |element| element - 1 }
     end
 
     until ltr_down.any? { |e| e > 7 }
-      return true if [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class) && @board[ltr_down[0]][ltr_down[1]].color != @current_player
+      if [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class) && @board[ltr_down[0]][ltr_down[1]].color != @current_player
+        return true
+      end
 
-      ltr_down.map! { |element| element + 1}
+      ltr_down.map! { |element| element + 1 }
     end
   end
 
   def check_rtl(rtl_up, rtl_down)
     until rtl_up[0].negative? || rtl_up[1] > 7
-      return true if [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class) && @board[rtl_up[0]][rtl_up[1]].color != @current_player
+      if [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class) && @board[rtl_up[0]][rtl_up[1]].color != @current_player
+        return true
+      end
 
       rtl_up = [rtl_up[0] - 1, rtl_up[1] + 1]
     end
 
     until rtl_down[0] > 7 || rtl_down[1].negative?
-      return true if [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class) && @board[rtl_down[0]][rtl_down[1]].color != @current_player
+      if [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class) && @board[rtl_down[0]][rtl_down[1]].color != @current_player
+        return true
+      end
 
       rtl_down = [rtl_down[0] + 1, rtl_down[1] - 1]
     end
+  end
+
+  def check_knights(row, col, possible = [])
+    4.times do |i|
+      possible.clear
+      possible << row + TEST_X[i]
+      possible << col + TEST_Y[i]
+      next if possible.any?(&:negative?)
+
+      return true if @board[possible[0]][possible[1]].class == Knight && @board[possible[0]][possible[1]].color != @current_player
+    end
+    false
   end
 end

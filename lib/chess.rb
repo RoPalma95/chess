@@ -76,9 +76,10 @@ end
 game = Chess.new
 game.set_board
 game.board[7][4] = nil
-game.board[0][0] = King.new('white', [0, 0])
-game.white_king = [0, 0]
-game.board[3][4] = Bishop.new('black', [3, 4])
+game.board[3][3] = King.new('white', [3, 3])
+game.white_king = [3, 3]
+game.board[3][4] = Knight.new('black', [3, 4])
 # game.board.each { |row| p row }
-puts "#{game.current_player.capitalize} King is in check." if game.check?
+
+puts game.check? ? "#{game.current_player.capitalize} King IS in check." : "#{game.current_player.capitalize} King IS NOT in check"
 # p game.make_move
