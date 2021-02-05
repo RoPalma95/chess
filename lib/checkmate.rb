@@ -21,14 +21,17 @@ module Check
   private
 
   def check_horizontal(row, left, right)
-    # binding.pry
     until left.negative?
+      break if !@board[row][left].nil? && @board[row][left].color == @current_player
+
       return true if [Rook, Queen].include?(@board[row][left].class) && @board[row][left].color != @current_player
 
       left -= 1
     end
 
     until right > 7
+      break if !@board[row][right].nil? && @board[row][right].color == @current_player
+
       return true if [Rook, Queen].include?(@board[row][right].class) && @board[row][right].color != @current_player
 
       right += 1
@@ -38,12 +41,16 @@ module Check
 
   def check_vertical(col, up, down)
     until up.negative?
+      break if !@board[up][col].nil? && @board[up][col].color == @current_player
+
       return true if [Rook, Queen].include?(@board[up][col].class) && @board[up][col].color != @current_player
 
       up -= 1
     end
 
     until down > 7
+      break if !@board[up][col].nil? && @board[up][col].color == @current_player
+
       return true if [Rook, Queen].include?(@board[down][col].class) && @board[down][col].color != @current_player
 
       down += 1
@@ -104,15 +111,13 @@ module Check
 end
 
 module Mate
-  include MoveValidation
-
   def checkmate?
     king_square = @current_player == 'white' ? @white_king : @black_king
     king = @board[king_square[0]][king_square[1]]
     @board[king_square[0]][king_square[1]] = nil
 
     if_king_moves?(king)
-    #  || can_someone_block?(king)
+    #  || someone_block?(king)
   end
 
   private
@@ -135,4 +140,7 @@ module Mate
     possible[k].clear << king.square[0] << king.square[1]
     true
   end
+
+  # def someone_block?(king)
+  # end
 end
