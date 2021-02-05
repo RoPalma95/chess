@@ -64,7 +64,9 @@ module Check
 
   def check_ltr(ltr_up, ltr_down)
     until ltr_up.any?(&:negative?)
-      if [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class) && @board[ltr_up[0]][ltr_up[1]].color != @current_player
+      if !@board[ltr_up[0]][ltr_up[1]].nil? && @board[ltr_up[0]][ltr_up[1]].color == @current_player
+        break
+      elsif [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class)
         return true
       end
 
@@ -72,7 +74,9 @@ module Check
     end
 
     until ltr_down.any? { |e| e > 7 }
-      if [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class) && @board[ltr_down[0]][ltr_down[1]].color != @current_player
+      if !@board[ltr_down[0]][ltr_down[1]].nil? && @board[ltr_down[0]][ltr_down[1]].color == @current_player
+        break
+      elsif [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class)
         return true
       end
 
@@ -82,7 +86,9 @@ module Check
 
   def check_rtl(rtl_up, rtl_down)
     until rtl_up[0].negative? || rtl_up[1] > 7
-      if [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class) && @board[rtl_up[0]][rtl_up[1]].color != @current_player
+      if !@board[rtl_up[0]][rtl_up[1]].nil? && @board[rtl_up[0]][rtl_up[1]].color == @current_player
+        break
+      elsif [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class)
         return true
       end
 
@@ -90,7 +96,9 @@ module Check
     end
 
     until rtl_down[0] > 7 || rtl_down[1].negative?
-      if [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class) && @board[rtl_down[0]][rtl_down[1]].color != @current_player
+      if !@board[rtl_down[0]][rtl_down[1]].nil? && @board[rtl_down[0]][rtl_down[1]].color == @current_player
+        break
+      elsif [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class)
         return true
       end
 
