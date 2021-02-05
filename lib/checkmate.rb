@@ -22,18 +22,21 @@ module Check
 
   def check_horizontal(row, left, right)
     until left.negative?
-      break if !@board[row][left].nil? && @board[row][left].color == @current_player
-
-      return true if [Rook, Queen].include?(@board[row][left].class) && @board[row][left].color != @current_player
+      if !@board[row][left].nil? && @board[row][left].color == @current_player
+        break
+      elsif [Rook, Queen].include?(@board[row][left].class)
+        return true 
+      end
 
       left -= 1
     end
 
     until right > 7
-      break if !@board[row][right].nil? && @board[row][right].color == @current_player
-
-      return true if [Rook, Queen].include?(@board[row][right].class) && @board[row][right].color != @current_player
-
+      if !@board[row][right].nil? && @board[row][right].color == @current_player
+        break
+      elsif [Rook, Queen].include?(@board[row][right].class)
+        return true
+      end
       right += 1
     end
     false
@@ -41,17 +44,21 @@ module Check
 
   def check_vertical(col, up, down)
     until up.negative?
-      break if !@board[up][col].nil? && @board[up][col].color == @current_player
-
-      return true if [Rook, Queen].include?(@board[up][col].class) && @board[up][col].color != @current_player
+      if !@board[up][col].nil? && @board[up][col].color == @current_player
+        break
+      elsif [Rook, Queen].include?(@board[up][col].class)
+        return true
+      end
 
       up -= 1
     end
 
     until down > 7
-      break if !@board[up][col].nil? && @board[up][col].color == @current_player
-
-      return true if [Rook, Queen].include?(@board[down][col].class) && @board[down][col].color != @current_player
+      if !@board[down][col].nil? && @board[down][col].color == @current_player
+        break
+      elsif [Rook, Queen].include?(@board[down][col].class)
+        return true
+      end
 
       down += 1
     end
