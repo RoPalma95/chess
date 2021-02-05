@@ -5,10 +5,6 @@ require_relative '../lib/pieces'
 require_relative '../lib/move_validation'
 
 module Check
-
-  TEST_X = [-2, -2, 2, 2].freeze
-  TEST_Y = [-1, 1, -1, 1].freeze
-
   def check?
     king = @current_player == 'white' ? @white_king : @black_king
     # 1. check if there are any opposing rooks or queens in the same
@@ -96,10 +92,9 @@ module Check
   end
 
   def check_knights(row, col, possible = [])
-    4.times do |i|
-      possible.clear
-      possible << row + TEST_X[i]
-      possible << col + TEST_Y[i]
+    8.times do |i|
+      possible.clear << row + Knight::POSSIBLE_X[i]
+      possible << col + Knight::POSSIBLE_Y[i]
       next if possible.any?(&:negative?)
 
       return true if @board[possible[0]][possible[1]].class == Knight && @board[possible[0]][possible[1]].color != @current_player

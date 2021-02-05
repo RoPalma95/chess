@@ -79,18 +79,18 @@ game = Chess.new
 # game.board[7][4] = nil
 game.board[3][3] = King.new('white', [3, 3])
 game.white_king = [3, 3]
-game.board[4][1] = Knight.new('white', [4, 1])
+game.board[1][1] = Knight.new('black', [1, 1])
 # game.board[1][5] = Knight.new('black', [1, 5])
-game.board[0][3] = Rook.new('black', [0, 3])
-game.board[3][5] = Rook.new('black', [3, 5])
+game.board[4][0] = Rook.new('black', [4, 0])
+game.board[3][2] = Rook.new('white', [3, 2])
 # game.board[3][5] = Rook.new('black', [3, 5])
-game.board[1][5] = Queen.new('black', [1, 5])
-# game.board[2][5] = Queen.new('black', [2, 5])
-game.board[4][4] = Bishop.new('white', [4, 4])
+game.board[0][4] = Queen.new('black', [0, 4])
+game.board[4][6] = Queen.new('white', [4, 6])
+game.board[6][6] = Bishop.new('black', [6, 6])
 
 # game.board.each { |row| p row }
 
 puts game.check? ? "#{game.current_player.capitalize} King IS in check." : "#{game.current_player.capitalize} King IS NOT in check"
-puts "Checkmate? #{game.checkmate}?"
+puts "Checkmate? #{game.checkmate?}"
 # p game.white_king
 # game.board.each { |row| p row }
