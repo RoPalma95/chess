@@ -19,7 +19,7 @@ class Chess
     @selected_piece = []
     @white_king = []
     @black_king = []
-    @checking_piece = nil
+    @checking_piece = []
   end
 
   def play_game

@@ -25,7 +25,7 @@ module Check
       if !@board[row][left].nil? && @board[row][left].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[row][left].class)
-        by_who?(@board[row][left])
+        by_who?(@board[row][left], 'left')
         return true 
       end
 
@@ -36,7 +36,7 @@ module Check
       if !@board[row][right].nil? && @board[row][right].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[row][right].class)
-        by_who?(@board[row][right])
+        by_who?(@board[row][right], 'right')
         return true
       end
       right += 1
@@ -49,7 +49,7 @@ module Check
       if !@board[up][col].nil? && @board[up][col].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[up][col].class)
-        by_who?(@board[up][col])
+        by_who?(@board[up][col], 'up')
         return true
       end
 
@@ -60,7 +60,7 @@ module Check
       if !@board[down][col].nil? && @board[down][col].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[down][col].class)
-        by_who?(@board[down][col])
+        by_who?(@board[down][col], 'down')
         return true
       end
 
@@ -78,7 +78,7 @@ module Check
       if !@board[ltr_up[0]][ltr_up[1]].nil? && @board[ltr_up[0]][ltr_up[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class)
-        by_who?(@board[ltr_up[0]][ltr_up[1]])
+        by_who?(@board[ltr_up[0]][ltr_up[1]], 'dlup')
         return true
       end
 
@@ -89,7 +89,7 @@ module Check
       if !@board[ltr_down[0]][ltr_down[1]].nil? && @board[ltr_down[0]][ltr_down[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class)
-        by_who?(@board[ltr_down[0]][ltr_down[1]])
+        by_who?(@board[ltr_down[0]][ltr_down[1]], 'dldown')
         return true
       end
 
@@ -102,7 +102,7 @@ module Check
       if !@board[rtl_up[0]][rtl_up[1]].nil? && @board[rtl_up[0]][rtl_up[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class)
-        by_who?(@board[rtl_up[0]][rtl_up[1]])
+        by_who?(@board[rtl_up[0]][rtl_up[1]], 'drup')
         return true
       end
 
@@ -113,7 +113,7 @@ module Check
       if !@board[rtl_down[0]][rtl_down[1]].nil? && @board[rtl_down[0]][rtl_down[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class)
-        by_who?(@board[rtl_down[0]][rtl_down[1]])
+        by_who?(@board[rtl_down[0]][rtl_down[1]], 'drdown')
         return true
       end
 
@@ -127,13 +127,16 @@ module Check
       possible << col + Knight::POSSIBLE_Y[i]
       next if possible.any?(&:negative?)
 
-      return true if @board[possible[0]][possible[1]].class == Knight && @board[possible[0]][possible[1]].color != @current_player
+      if @board[possible[0]][possible[1]].class == Knight && @board[possible[0]][possible[1]].color != @current_player
+        by_who?(@board[possible[0]][possible[1]])
+        return true
+    end
     end
     false
   end
 
-  def by_who?(piece)
-    @checking_piece = piece if [Queen, Bishop, Rook].include?(piece.class)
+  def by_who?(piece, where = 'knight')
+    @checking_piece << piece << where
   end
 end
 
@@ -144,7 +147,7 @@ module Mate
     @board[king_square[0]][king_square[1]] = nil
 
     if_king_moves?(king)
-    #  || someone_block?(king)
+    # || someone_block?(king)
   end
 
   private
