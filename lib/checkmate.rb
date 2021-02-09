@@ -6,16 +6,17 @@ require_relative '../lib/move_validation'
 
 module Check
   def check?
-    king = @current_player == 'white' ? @white_king : @black_king
+    king = @current_player == 'white' ? @white[King][0] : @black[King][0]
+    square = king.square
     # 1. check if there are any opposing rooks or queens in the same
     # row or column as the king
-    check_horizontal(king[0], king[1] - 1, king[1] + 1) ||
-      check_vertical(king[1], king[0] - 1, king[0] + 1) ||
+    check_horizontal(square[0], square[1] - 1, square[1] + 1) ||
+      check_vertical(square[1], square[0] - 1, square[0] + 1) ||
       # 2. check if there are any opposing bishops or queens in the same
       # diagonals as the king
-      check_diagonals(king) ||
+      check_diagonals(square) ||
     # 3. check if the king can be taken by an opposing knight
-      check_knights(king[0], king[1])
+      check_knights(square[0], square[1])
   end
 
   private
@@ -142,32 +143,29 @@ end
 
 module Mate
   def checkmate?
-    king_square = @current_player == 'white' ? @white_king : @black_king
-    king = @board[king_square[0]][king_square[1]]
+    king = @current_player == 'white' ? @white[King][0] : @black[King][0]
+    king_square = king.square
     @board[king_square[0]][king_square[1]] = nil
 
     if_king_moves?(king)
     # || someone_block?(king)
   end
 
-  private
-
-  def if_king_moves?(king, possible = [@white_king, @black_king])
+  def if_king_moves?(king, possible = [])
     test_square = king.square
-    k = king.color == 'white' ? 0 : 1
     # binding.pry
     8.times do |i|
-      possible[k].clear << test_square[0] + King::POSSIBLE_X[i]
-      possible[k] << test_square[1] + King::POSSIBLE_Y[i]
+      possible.clear << test_square[0] + King::POSSIBLE_X[i]
+      possible << test_square[1] + King::POSSIBLE_Y[i]
 
-      if !out_of_bounds?(possible[k]) && king.valid_move?(possible[k]) && can_take?(possible[k])
+      if !out_of_bounds?(possible) && king.valid_move?(possible) && can_take?(possible)
         unless check?
-          possible[k].clear << king.square[0] << king.square[1]
+          possible.clear << king.square[0] << king.square[1]
           return false
         end
       end
     end
-    possible[k].clear << king.square[0] << king.square[1]
+    possible.clear << king.square[0] << king.square[1]
     true
   end
 
