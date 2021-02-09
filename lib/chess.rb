@@ -10,7 +10,7 @@ class Chess
   include Check
   include Mate
 
-  attr_reader :board, :current_player, :selected_piece, :white_king, :black_king
+  attr_reader :board, :current_player, :selected_piece, :white_king, :black_king, :checking_piece
   attr_writer :board, :white_king
 
   def initialize

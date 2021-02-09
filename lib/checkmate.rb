@@ -25,6 +25,7 @@ module Check
       if !@board[row][left].nil? && @board[row][left].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[row][left].class)
+        by_who?(@board[row][left])
         return true 
       end
 
@@ -35,6 +36,7 @@ module Check
       if !@board[row][right].nil? && @board[row][right].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[row][right].class)
+        by_who?(@board[row][right])
         return true
       end
       right += 1
@@ -47,6 +49,7 @@ module Check
       if !@board[up][col].nil? && @board[up][col].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[up][col].class)
+        by_who?(@board[up][col])
         return true
       end
 
@@ -57,6 +60,7 @@ module Check
       if !@board[down][col].nil? && @board[down][col].color == @current_player
         break
       elsif [Rook, Queen].include?(@board[down][col].class)
+        by_who?(@board[down][col])
         return true
       end
 
@@ -74,6 +78,7 @@ module Check
       if !@board[ltr_up[0]][ltr_up[1]].nil? && @board[ltr_up[0]][ltr_up[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class)
+        by_who?(@board[ltr_up[0]][ltr_up[1]])
         return true
       end
 
@@ -84,6 +89,7 @@ module Check
       if !@board[ltr_down[0]][ltr_down[1]].nil? && @board[ltr_down[0]][ltr_down[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class)
+        by_who?(@board[ltr_down[0]][ltr_down[1]])
         return true
       end
 
@@ -96,6 +102,7 @@ module Check
       if !@board[rtl_up[0]][rtl_up[1]].nil? && @board[rtl_up[0]][rtl_up[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class)
+        by_who?(@board[rtl_up[0]][rtl_up[1]])
         return true
       end
 
@@ -106,6 +113,7 @@ module Check
       if !@board[rtl_down[0]][rtl_down[1]].nil? && @board[rtl_down[0]][rtl_down[1]].color == @current_player
         break
       elsif [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class)
+        by_who?(@board[rtl_down[0]][rtl_down[1]])
         return true
       end
 
@@ -122,6 +130,10 @@ module Check
       return true if @board[possible[0]][possible[1]].class == Knight && @board[possible[0]][possible[1]].color != @current_player
     end
     false
+  end
+
+  def by_who?(piece)
+    @checking_piece = piece if [Queen, Bishop, Rook].include?(piece.class)
   end
 end
 
