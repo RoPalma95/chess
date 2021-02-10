@@ -77,62 +77,23 @@ end
 
 game = Chess.new
 # game.set_board
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 # game.white.each_pair do |key, value| 
 #   value.each { |piece| p "#{key} at #{piece.square}" }
 # end
 # game.check?
 # p game.black
->>>>>>> track_pieces
 # game.board[7][4] = nil
 
 game.board[3][3] = King.new('white', [3, 3])
-<<<<<<< HEAD
-game.white_king = [3, 3]
-# game.board[1][1] = Knight.new('black', [1, 1])
-# game.board[1][5] = Knight.new('black', [1, 5])
-game.board[7][3] = Rook.new('black', [7, 3])
-game.board[1][3] = Rook.new('white', [1, 3])
-game.board[3][7] = Rook.new('black', [3, 7])
-game.board[3][1] = Rook.new('white', [3, 1])
-# game.board[3][5] = Rook.new('black', [3, 5])
-game.board[0][3] = Queen.new('black', [0, 3])
-game.board[5][3] = Queen.new('white', [5, 3])
-game.board[3][0] = Queen.new('black', [3, 0])
-game.board[3][5] = Queen.new('white', [3, 5])
-game.board[0][6] = Queen.new('black', [0, 6])
-# game.board[6][6] = Bishop.new('black', [6, 6])
-=======
-# game.make_move
-
-
-
-game.board[3][3] = King.new('white', [3, 3])
 game.board[1][5] = Knight.new('white', [1, 5])
-game.board[5][4] = Knight.new('black', [5, 4])
-=======
-game.board[1][5] = Knight.new('white', [1, 5])
->>>>>>> track_pieces
 
 game.board[1][1] = Queen.new('black', [1, 1])
 #
 game.board[6][0] = Bishop.new('black', [6, 0])
-<<<<<<< HEAD
-game.board[3][2] = Bishop.new('white', [3, 2])
-game.board[0][5] = Bishop.new('white', [0, 5])
-
-# game.board[7][3] = Rook.new('black', [7, 3])
-game.board[5][1] = Rook.new('white', [5, 1])
-
-game.board[2][2] = Pawn.new('white', [2, 2])
-=======
 game.board[4][2] = Bishop.new('white', [4, 2])
 game.board[0][5] = Bishop.new('white', [0, 5])
 
 game.board[3][0] = Rook.new('black', [3, 0])
->>>>>>> track_pieces
 
 game.board.each do |row|
   row.each do |piece|
@@ -143,15 +104,6 @@ game.board.each do |row|
     end
   end
 end
-<<<<<<< HEAD
-
-puts "White pieces on the board."
-game.white.each_pair do |key, value|
-  value.each { |piece| puts "#{key} at #{piece.square}" }
-end
->>>>>>> Stashed changes
-=======
->>>>>>> track_pieces
 
 puts "White pieces on the board."
 game.white.each_pair do |key, value|
@@ -163,20 +115,6 @@ game.black.each_pair do |key, value|
   value.each { |piece| puts "#{key} at #{piece.square}" }
 end
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-puts game.check? ? "#{game.current_player.capitalize} King IS in check." : "#{game.current_player.capitalize} King IS NOT in check"
-puts "Checkmate? #{game.checkmate?}"
-=======
-if game.check?
-  puts "#{game.current_player.capitalize} King IS in check."
-  puts "Check given by #{game.checking_piece[0].class} at #{game.checking_piece[0].square}"
-else
-  puts "#{game.current_player.capitalize} King IS NOT in check"
-end
-# puts "Checkmate? #{game.checkmate?}"
->>>>>>> Stashed changes
-=======
 # if game.check?
 #   puts "#{game.current_player.capitalize} King IS in check."
 #   puts "Check given by #{game.checking_piece[0].class} at #{game.checking_piece[0].square}"
@@ -184,7 +122,6 @@ end
 #   puts "#{game.current_player.capitalize} King IS NOT in check"
 # end
 # puts "Checkmate? #{game.checkmate?}"
->>>>>>> track_pieces
 # p game.white_king
 # game.board.each { |row| p row }
 
