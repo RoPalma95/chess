@@ -12,6 +12,7 @@ module CreatePieces
     create_bishops
     create_queens
     create_kings
+    track_pieces
   end
 
   def create_pawns
@@ -55,13 +56,22 @@ module CreatePieces
 
   def create_kings
     @board[7][4] = King.new('white', [7, 4])
-    @white_king = [7, 4]
     @board[0][4] = King.new('black', [0, 4])
-    @black_king = [0, 4]
   end
-  # def create_first_row
-  #   POSITIONS.each_with_index do |piece, i|
-  #     @board[0][i] = piece.new('white', "0#{i}")
-  #   end
-  # end
+
+  def track_pieces
+    # track white pieces
+    2.times do |i|
+      @board[7 - i].each do |piece|
+        @white.has_key?(piece.class) ? @white[piece.class] << piece : @white[piece.class] = [piece]
+      end
+    end
+
+    # track black pieces
+    2.times do |i|
+      @board[0 + i].each do |piece|
+        @black.has_key?(piece.class) ? @black[piece.class] << piece : @black[piece.class] = [piece]
+      end
+    end
+  end
 end
