@@ -5,12 +5,12 @@ module MoveValidation
   # VALID_PIECES = %w[R N B Q K P].freeze
   COL_LETTERS = %w[A B C D E F G H].freeze
   PIECES = {
-    'R' => 'Rook',
-    'N' => 'Knight',
-    'B' => 'Bishop',
-    'Q' => 'Queen',
-    'K' => 'King',
-    'P' => 'Pawn'
+    'R' => Rook,
+    'N' => Knight,
+    'B' => Bishop,
+    'Q' => Queen,
+    'K' => King,
+    'P' => Pawn
   }.freeze
 
   def valid_piece?(piece)
@@ -18,10 +18,9 @@ module MoveValidation
   end
 
   def out_of_bounds?(position)
-    # position is in CHESS NOTATION
-    if position[0].class == String
+    if position[0].class == String # 'position' is in CHESS NOTATION
       return !(COL_LETTERS.include?(position[0]) && position[1].to_i.between?(1, 8))
-    else
+    else # 'position' is an array [row, col]
       return !(position.all? { |e| e.between?(0, 7) })
     end
   end
@@ -30,9 +29,13 @@ module MoveValidation
     return false if out_of_bounds?(position)
 
     position = translate(position)
-    actual_piece = @board[position[0]][position[1]]
     piece = PIECES[piece]
-    actual_piece.class.to_s == piece && actual_piece.color == current_player
+    if current_player == 'white'
+      @white[piece].each { |element| return true if element.square == position }
+    else
+      @black[piece].each { |element| return true if element.square == position }
+    end
+    false
   end
 
   def valid_end_pos?(position)
@@ -66,7 +69,7 @@ module MoveValidation
   def translate(position)
     # translates CHESS NOTATION into Ruby indexes [row, col]
     position = position.reverse.split('')
-    position[0] = (8 - position[0].to_i) 
+    position[0] = 8 - position[0].to_i 
     position[1] = COL_LETTERS.index(position[1])
     position
   end

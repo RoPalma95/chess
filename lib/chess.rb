@@ -32,12 +32,12 @@ class Chess
   def make_move
     puts "#{current_player.upcase}'s turn. Please select a piece to move >>"
     select_piece
-    puts "Where will you move your #{selected_piece.join('')}? >> "
+    puts "Where will you move your #{selected_piece.join(' ')}? >> "
     new_position = input_position
   end
 
   def select_piece
-    piece = gets.chomp.upcase
+    piece = gets.chomp.upcase # "piece" is a 1-character string
     until valid_piece?(piece)
       puts 'Please select a valid piece (R, N, B, Q, K or P) >> '
       piece = gets.chomp.upcase
@@ -48,7 +48,7 @@ class Chess
 
   def initial_position(piece)
     puts "Which #{piece} would you like to move? (Input its current square)>> "
-    position = gets.chomp.upcase
+    position = gets.chomp.upcase # "position" is a 2-characters string
     until valid_init_pos?(piece, position)
       puts "Please select a square that contains a #{current_player} #{piece}"
       position = gets.chomp.upcase
