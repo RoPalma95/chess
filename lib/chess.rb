@@ -85,15 +85,16 @@ game = Chess.new
 # game.board[7][4] = nil
 
 game.board[3][3] = King.new('white', [3, 3])
-game.board[1][5] = Knight.new('white', [1, 5])
+# game.board[1][5] = Knight.new('white', [1, 5])
+game.board[5][1] = Knight.new('black', [5, 1])
 
-game.board[1][1] = Queen.new('black', [1, 1])
+game.board[1][2] = Queen.new('black', [1, 2])
 #
-game.board[6][0] = Bishop.new('black', [6, 0])
-game.board[4][2] = Bishop.new('white', [4, 2])
-game.board[0][5] = Bishop.new('white', [0, 5])
+game.board[0][6] = Bishop.new('black', [0, 6])
+# game.board[4][2] = Bishop.new('white', [4, 2])
+# game.board[0][5] = Bishop.new('white', [0, 5])
 
-game.board[3][0] = Rook.new('black', [3, 0])
+game.board[6][4] = Rook.new('black', [6, 4])
 
 game.board.each do |row|
   row.each do |piece|
@@ -115,13 +116,18 @@ game.black.each_pair do |key, value|
   value.each { |piece| puts "#{key} at #{piece.square}" }
 end
 
-# if game.check?
-#   puts "#{game.current_player.capitalize} King IS in check."
-#   puts "Check given by #{game.checking_piece[0].class} at #{game.checking_piece[0].square}"
-# else
-#   puts "#{game.current_player.capitalize} King IS NOT in check"
-# end
-# puts "Checkmate? #{game.checkmate?}"
+king = game.current_player == 'white' ? game.white[King][0] : game.black[King][0]
+
+if game.check?(king.square)
+  puts "\n#{game.current_player.capitalize} King IS in check."
+  puts "Check given by: "
+  game.checking_piece.each do |piece|
+    puts "\t#{piece.class} at #{piece.square}"
+  end
+else
+  puts "\n#{game.current_player.capitalize} King IS NOT in check"
+end
+puts "\nCheckmate? #{game.checkmate?}"
 # p game.white_king
 # game.board.each { |row| p row }
 
