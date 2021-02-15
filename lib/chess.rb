@@ -90,13 +90,13 @@ game.board[5][1] = Knight.new('black', [5, 1])
 
 game.board[1][2] = Queen.new('black', [1, 2])
 #
-game.board[3][7] = Rook.new('black', [3, 7])
+game.board[0][0] =Bishop.new('black', [0, 0])
 # game.board[4][2] = Bishop.new('white', [4, 2])
 # game.board[0][5] = Bishop.new('white', [0, 5])
 
 game.board[6][4] = Rook.new('black', [6, 4])
 
-game.board[4][5] = Bishop.new('white', [2, 6])
+game.board[0][7] = Rook.new('white', [0, 7])
 
 game.board.each do |row|
   row.each do |piece|

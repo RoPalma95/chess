@@ -159,27 +159,24 @@ module Mate
   def someone_block?(king)
     own_pieces = king.color == 'white' ? @white : @black
     pieces_to_block = may_be_blocked(king).compact
-
+    
     pieces_to_block.each do |piece|
-      location = piece.square[0] <=> king.square[0] # location => -1: above; 0: same row; 1: below
-      return block_vertical?(king, piece, own_pieces, location) if location.nonzero?
-
       location = piece.square[1] <=> king.square[1] # location => -1: left; 0: same col; 1: right
-      return block_horizontal?(king, piece, own_pieces, location) if location.nonzero?
+      return block_horizontal?(king, piece, own_pieces, location) if location.nonzero? && piece.class != Bishop
+
+      location = piece.square[0] <=> king.square[0] # location => -1: above; 0: same row; 1: below
+      return block_vertical?(king, piece, own_pieces, location) if location.nonzero? && piece.class != Bishop
+
+      return block_diagonal?(king, piece, own_pieces, location)
     end
-    true
   end
 
-  def direct_LoS?(king, piece) # LOS == Line of Sight
-    # in the same row? || in the same column?
-    king.square[0] == piece.square[0] || king.square[1] == piece.square[1]
-  end
-
-  def diagonal_LoS?(king, piece)
-    ltr = ltr(king.square)
-    rtl = rtl(king.square)
-
-    ltr.include?(piece.square) || rtl.include?(piece.square)
+  def may_be_blocked(king)
+    @checking_piece.map do |piece| 
+      if [Queen, Rook, Bishop].include?(piece.class)
+        direct_LoS?(king, piece) || diagonal_LoS?(king, piece) ? piece : next
+      end
+    end
   end
 
   private 
@@ -206,14 +203,18 @@ module Mate
     a
   end
 
-  def may_be_blocked(king)
-    @checking_piece.map do |piece| 
-      if [Queen, Rook, Bishop].include?(piece.class)
-        direct_LoS?(king, piece) || diagonal_LoS?(king, piece) ? piece : next
-      end
-    end
+  def direct_LoS?(king, piece) # LOS == Line of Sight
+    # in the same row? || in the same column?
+    king.square[0] == piece.square[0] || king.square[1] == piece.square[1]
   end
 
+  def diagonal_LoS?(king, piece)
+    ltr = ltr(king.square)
+    rtl = rtl(king.square)
+
+    ltr.include?(piece.square) || rtl.include?(piece.square)
+  end
+  
   def block_vertical?(king, piece, player_pieces, location)
     p_row, p_col = piece.square
     k_row, k_col = king.square
@@ -221,11 +222,11 @@ module Mate
     if location.negative?
       row = k_row - 1
       until row < p_row
-        player_pieces.each_value do |piece_class|
-          next if piece_class[0].class == King
+        player_pieces.each_pair do |p_class, pieces|
+          next if p_class == King
 
-          return false if piece_class.any? do |piece|
-                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
+          return false if pieces.any? do |piece|
+                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
                           end
 
         end
@@ -234,11 +235,11 @@ module Mate
     else
       row = k_row + 1
       until row > p_row
-        player_pieces.each_value do |piece_class|
-          next if piece_class[0].class == King
+        player_pieces.each_pair do |p_class, pieces|
+          next if p_class == King
 
-          return false if piece_class.any? do |piece|
-                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
+          return false if pieces.any? do |piece|
+                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
                           end
 
         end
@@ -255,11 +256,11 @@ module Mate
     if location.negative?
       col = k_col - 1
       until col < p_col
-        player_pieces.each_value do |piece_class|
-          next if piece_class[0].class == King
+        player_pieces.each_pair do |p_class, pieces|
+          next if p_class == King
 
-          return false if piece_class.any? do |piece|
-                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
+          return false if pieces.any? do |piece|
+                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
                           end
 
         end
@@ -268,15 +269,78 @@ module Mate
     else
       col = k_col + 1
       until col > p_col
-        player_pieces.each_value do |piece_class|
-          next if piece_class[0].class == King
+        player_pieces.each_pair do |p_class, pieces|
+          next if p_class == King
 
-          return false if piece_class.any? do |piece|
-                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
+          return false if pieces.any? do |piece|
+                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
                           end
 
         end
         col += 1
+      end
+    end
+    true
+  end
+
+  def block_diagonal?(king, piece, player_pieces, location)
+    p_row, p_col = piece.square
+    k_row, k_col = king.square
+
+    ltr = ltr(king.square)
+    rtl = rtl(king.square)
+
+    if ltr.include?(piece.square)
+      if location.negative?
+        row, col = [k_row - 1, k_col - 1]
+        until [row, col] == [p_row - 1, p_col - 1]
+          player_pieces.each_pair do |p_class, pieces|
+            next if p_class == King
+
+            return false if pieces.any? do |piece|
+                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                            end
+          end
+          row, col = [row - 1, col - 1]
+        end
+      else # location == 1
+        row, col = [k_row + 1, k_col + 1]
+        until [row, col] == [p_row + 1, p_col + 1]
+          player_pieces.each_pair do |p_class, pieces|
+            next if p_class == King
+
+            return false if pieces.any? do |piece|
+                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                            end
+          end
+          row, col = [row + 1, col + 1]
+        end
+      end
+    else # piece is included in the kings rtl
+      if location.negative?
+        row, col = [k_row - 1, k_col + 1]
+        until [row, col] == [p_row - 1, p_col + 1]
+          player_pieces.each_pair do |p_class, pieces|
+            next if p_class == King
+
+            return false if pieces.any? do |piece|
+                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                            end
+          end
+          row, col = [row - 1, col + 1]
+        end
+      else # location == 1
+        row, col = [k_row + 1, k_col - 1]
+        until [row, col] == [p_row + 1, p_col - 1]
+          player_pieces.each_pair do |p_class, pieces|
+            next if p_class == King
+
+            return false if pieces.any? do |piece|
+                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                            end
+          end
+          row, col = [row + 1, col - 1]
+        end
       end
     end
     true
