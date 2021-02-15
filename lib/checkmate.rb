@@ -128,11 +128,9 @@ end
 module Mate
   def checkmate?
     king = @current_player == 'white' ? @white[King][0] : @black[King][0]
-    king_square = king.square
-    @board[king_square[0]][king_square[1]] = nil
-    # binding.pry
-    if_king_moves?(king)
-    # || someone_block?(king)
+    @board[king.square[0]][king.square[1]] = nil
+
+    if_king_moves?(king) && someone_block?(king)
   end
 
   def if_king_moves?(king, possible = [])
@@ -158,6 +156,129 @@ module Mate
     true
   end
 
-  # def someone_block?(king)
-  # end
+  def someone_block?(king)
+    own_pieces = king.color == 'white' ? @white : @black
+    pieces_to_block = may_be_blocked(king).compact
+
+    pieces_to_block.each do |piece|
+      location = piece.square[0] <=> king.square[0] # location => -1: above; 0: same row; 1: below
+      return block_vertical?(king, piece, own_pieces, location) if location.nonzero?
+
+      location = piece.square[1] <=> king.square[1] # location => -1: left; 0: same col; 1: right
+      return block_horizontal?(king, piece, own_pieces, location) if location.nonzero?
+    end
+    true
+  end
+
+  def direct_LoS?(king, piece) # LOS == Line of Sight
+    # in the same row? || in the same column?
+    king.square[0] == piece.square[0] || king.square[1] == piece.square[1]
+  end
+
+  def diagonal_LoS?(king, piece)
+    ltr = ltr(king.square)
+    rtl = rtl(king.square)
+
+    ltr.include?(piece.square) || rtl.include?(piece.square)
+  end
+
+  private 
+
+  def ltr(base, a = [], r = 0, c = 0)
+    row, col = base
+    (row - col).negative? ? c = col - row : r = row - col
+  
+    until [r, c].any? { |e| e > 7 }
+      a << [r, c]
+      r += 1
+      c += 1
+    end
+    a
+  end
+  
+  def rtl(base, a = [])
+    row, col = base
+    8.times do |i|
+      8.times do |j|
+        a << [i, j] if i + j == row + col
+      end
+    end
+    a
+  end
+
+  def may_be_blocked(king)
+    @checking_piece.map do |piece| 
+      if [Queen, Rook, Bishop].include?(piece.class)
+        direct_LoS?(king, piece) || diagonal_LoS?(king, piece) ? piece : next
+      end
+    end
+  end
+
+  def block_vertical?(king, piece, player_pieces, location)
+    p_row, p_col = piece.square
+    k_row, k_col = king.square
+  
+    if location.negative?
+      row = k_row - 1
+      until row < p_row
+        player_pieces.each_value do |piece_class|
+          next if piece_class[0].class == King
+
+          return false if piece_class.any? do |piece|
+                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
+                          end
+
+        end
+        row -= 1
+      end
+    else
+      row = k_row + 1
+      until row > p_row
+        player_pieces.each_value do |piece_class|
+          next if piece_class[0].class == King
+
+          return false if piece_class.any? do |piece|
+                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
+                          end
+
+        end
+        row += 1
+      end
+    end
+    true
+  end
+
+  def block_horizontal?(king, piece, player_pieces, location)
+    p_row, p_col = piece.square
+    k_row, k_col = king.square
+  
+    if location.negative?
+      col = k_col - 1
+      until col < p_col
+        player_pieces.each_value do |piece_class|
+          next if piece_class[0].class == King
+
+          return false if piece_class.any? do |piece|
+                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
+                          end
+
+        end
+        col -= 1
+      end
+    else
+      col = k_col + 1
+      until col > p_col
+        player_pieces.each_value do |piece_class|
+          next if piece_class[0].class == King
+
+          return false if piece_class.any? do |piece|
+                            [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
+                          end
+
+        end
+        col += 1
+      end
+    end
+    true
+  end
 end
