@@ -23,17 +23,25 @@ class Chess
   end
 
   def play_game
+    # intro message
+    # set_board
+    make_move
+    @board.each do |row|
+      p row
+    end
   end
 
   def set_board
     create_pieces
+    # draw_board
   end
 
   def make_move
     puts "#{current_player.upcase}'s turn. Please select a piece to move >>"
     select_piece
     puts "Where will you move your #{selected_piece.join(' ')}? >> "
-    new_position = input_position
+    move = input_position
+    update_board(translate(move))
   end
 
   def select_piece
@@ -56,7 +64,7 @@ class Chess
     @selected_piece << position
   end
 
-  def input_position
+  def input_position # returns 'position' in Chess Notation
     position = gets.chomp.upcase
     until valid_end_pos?(position)
       puts "Please select a valid destination >> "
@@ -65,9 +73,23 @@ class Chess
     position
   end
 
-  
-  # def update_board(position)
-  # end
+  def update_board(new_pos)
+    current_space = translate(selected_piece[1])
+    piece = @board[current_space[0]][current_space[1]].dup
+    @board[current_space[0]][current_space[1]] = nil
+    piece = update_piece(piece, new_pos)
+    @board[new_pos[0]][new_pos[1]] = piece
+  end
+
+  def update_piece(piece, new_pos)
+    piece.square = new_pos
+    piece.moved = true if piece.moved == false
+    if piece.class == Queen
+      update_piece(piece.helper_B, new_pos)
+      update_piece(piece.helper_R, new_pos)
+    end
+    piece
+  end
 
   def change_player
     @current_player = current_player == 'white' ? 'black' : 'white'
@@ -76,69 +98,23 @@ class Chess
 end
 
 game = Chess.new
-# game.set_board
-# game.white.each_pair do |key, value| 
-#   value.each { |piece| p "#{key} at #{piece.square}" }
-# end
-# game.check?
-# p game.black
-# game.board[7][4] = nil
 
-game.board[3][3] = King.new('white', [3, 3])
-# game.board[1][5] = Knight.new('white', [1, 5])
-game.board[5][1] = Knight.new('black', [5, 1])
-
-game.board[1][2] = Queen.new('black', [1, 2])
-#
-game.board[0][0] =Bishop.new('black', [0, 0])
-# game.board[4][2] = Bishop.new('white', [4, 2])
-# game.board[0][5] = Bishop.new('white', [0, 5])
-
-game.board[6][4] = Rook.new('black', [6, 4])
-
-game.board[0][7] = Rook.new('white', [0, 7])
+game.board[5][1] = Knight.new('white', [5, 1])
+game.board[1][2] = Queen.new('white', [1, 2])
+game.board[3][3] = Pawn.new('black', [3, 3])
 
 game.board.each do |row|
-  row.each do |piece|
-    if !piece.nil? && piece.color == 'white'
-      game.white.has_key?(piece.class) ? game.white[piece.class] << piece : game.white[piece.class] = [piece]
-    elsif !piece.nil? && piece.color == 'black'
-      game.black.has_key?(piece.class) ? game.black[piece.class] << piece : game.black[piece.class] = [piece]
+  row.each do |square|
+    next if square.nil?
+
+    if square.color == 'white'
+      game.white.has_key?(square.class) ? game.white[square.class] << square : game.white[square.class] = [square]
+    else
+      game.black.has_key?(square.class) ? game.black[square.class] << square : game.black[square.class] = [square]
     end
   end
 end
 
-puts "White pieces on the board."
-game.white.each_pair do |key, value|
-  value.each { |piece| puts "#{key} at #{piece.square}" }
-end
-
-puts "\nBlack pieces on the board."
-game.black.each_pair do |key, value|
-  value.each { |piece| puts "#{key} at #{piece.square}" }
-end
-
-king = game.current_player == 'white' ? game.white[King][0] : game.black[King][0]
-
-if game.check?(king.square)
-  puts "\n#{game.current_player.capitalize} King IS in check."
-  puts "Check given by: "
-  game.checking_piece.each do |piece|
-    puts "\t#{piece.class} at #{piece.square}"
-  end
-else
-  puts "\n#{game.current_player.capitalize} King IS NOT in check"
-end
-puts "\nCheckmate? #{game.checkmate?}"
-# p game.white_king
-# game.board.each { |row| p row }
-
-# # scenario for blocking a check
-# game.board[3][3] = King.new('white', [3, 3])
-# game.white_king = [3, 3]
-# game.board[1][1] = Knight.new('black', [1, 1])
-# game.board[4][0] = Rook.new('black', [4, 0])
-# game.board[3][2] = Rook.new('white', [3, 2])
-# game.board[0][4] = Queen.new('black', [0, 4])
-# game.board[4][6] = Queen.new('white', [4, 6])
-# game.board[6][6] = Bishop.new('black', [6, 6])
+# p game.white
+# p game.black
+game.play_game

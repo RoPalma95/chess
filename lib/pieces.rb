@@ -2,7 +2,8 @@
 require 'pry'
 
 class Rook  
-  attr_reader :color, :square, :moved
+  attr_reader :color
+  attr_accessor :square, :moved
 
   def initialize(color, square)
     #square is a 2-element array [row, col]
@@ -182,6 +183,8 @@ end
 
 # be careful to change the helper pieces' @square when the queen moves
 class Queen < Rook
+  attr_accessor :helper_B, :helper_R
+
   def initialize(color, square)
     super
     @helper_R = Rook.new(color, square)

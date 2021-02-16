@@ -64,8 +64,6 @@ module MoveValidation
     return (dest_content.nil? || dest_content.color != @current_player) ? true : false
   end
 
-  private
-
   def translate(position)
     # translates CHESS NOTATION into Ruby indexes [row, col]
     position = position.reverse.split('')
