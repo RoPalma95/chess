@@ -26,9 +26,8 @@ class Chess
     # intro message
     # set_board
     make_move
-    @board.each do |row|
-      p row
-    end
+    white.each_pair { |key, value| p "#{key} -> #{value}" }
+    black.each_pair { |key, value| p "#{key} -> #{value}" }
   end
 
   def set_board
@@ -75,10 +74,14 @@ class Chess
 
   def update_board(new_pos)
     current_space = translate(selected_piece[1])
+    
     piece = @board[current_space[0]][current_space[1]].dup
     @board[current_space[0]][current_space[1]] = nil
-    piece = update_piece(piece, new_pos)
-    @board[new_pos[0]][new_pos[1]] = piece
+    
+    new_piece = update_piece(piece.dup, new_pos)
+    @board[new_pos[0]][new_pos[1]] = new_piece
+
+    update_player_hash(piece, new_piece)
   end
 
   def update_piece(piece, new_pos)
@@ -89,6 +92,17 @@ class Chess
       update_piece(piece.helper_R, new_pos)
     end
     piece
+  end
+
+  def update_player_hash(piece, new_piece)
+    player = current_player == 'white' ? @white : @black
+
+    player[piece.class].each do |value|
+      if value.square == piece.square
+        player[piece.class].delete(value)
+        player[piece.class] << new_piece
+      end
+    end
   end
 
   def change_player
