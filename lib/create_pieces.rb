@@ -1,9 +1,9 @@
 
 require_relative '../lib/pieces'
+require_relative '../lib/interface'
 
 module CreatePieces
-
-  # POSITIONS = %w[Rook Knight Bishop Queen King Bishop Knight Rook].freeze
+  include Interface
 
   def create_pieces
     create_pawns
@@ -13,6 +13,7 @@ module CreatePieces
     create_queens
     create_kings
     track_pieces
+    draw_board
   end
 
   def create_pawns

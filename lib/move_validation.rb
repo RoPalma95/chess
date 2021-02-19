@@ -1,8 +1,6 @@
 require 'pry'
 
 module MoveValidation
-
-  # VALID_PIECES = %w[R N B Q K P].freeze
   COL_LETTERS = %w[A B C D E F G H].freeze
   PIECES = {
     'R' => Rook,
@@ -80,7 +78,7 @@ module MoveValidation
 
     @board[piece_square[0]][piece_square[1]] = temp_piece
     @board[dest[0]][dest[1]] = dest_content
-    @checking_piece = temp_checking
+    @checking_piece = temp_checking unless temp_checking.nil?
 
     !result
   end

@@ -17,6 +17,7 @@ module Check
     check_diagonals(king.square)
     # 3. check if the king can be taken by an opposing knight
     check_knights(king.square[0], king.square[1])
+    # binding.pry
     !@checking_piece.empty?
   end
 
@@ -111,7 +112,7 @@ module Check
     8.times do |i|
       possible.clear << row + Knight::POSSIBLE_X[i]
       possible << col + Knight::POSSIBLE_Y[i]
-      next if possible.any?(&:negative?)
+      next unless possible.all? { |e| e.between?(0, 7)}
 
       if @board[possible[0]][possible[1]].class == Knight && @board[possible[0]][possible[1]].color != @current_player
         by_who?(@board[possible[0]][possible[1]])

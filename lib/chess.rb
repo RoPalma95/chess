@@ -3,12 +3,11 @@ require_relative '../lib/pieces'
 require_relative '../lib/create_pieces'
 require_relative '../lib/move_validation'
 require_relative '../lib/checkmate'
+require_relative '../lib/interface'
 
 class Chess
-  include CreatePieces
-  include MoveValidation
-  include Check
-  include Mate
+  include CreatePieces, MoveValidation
+  include Check, Mate, Interface
 
   attr_reader :board, :current_player, :selected_piece, :white, :black, :checking_piece, :win
   attr_writer :board, :white, :black, :win
@@ -23,29 +22,35 @@ class Chess
   end
 
   def play_game
-    # intro message
-    # create_pieces
-    # make_move
-    # change_player
-    # until win == true
-    #   # draw_board
-    #   if check?
-    #     winner?
-    #   else
-    #     make_move
-    #   end
-    #   change_player
-    # end
-    # puts "#{current_player.capitalize} wins!"
+    introduction
+    create_pieces
+    make_move
+    change_player
+    loop do
+      if check?
+        if checkmate?
+          break
+        end
+        puts "#{current_player} is in Check!"
+      end
+      make_move
+      change_player
+    end
+    puts "Checkmate! #{current_player.capitalize} wins!"
   end
 
   def make_move
     puts "#{current_player.upcase}'s turn. Please select a piece to move >>"
     select_piece
-    puts "Where will you move your #{selected_piece.join(' ')}? >> "
     move = translate(input_position)
-    legal?(move)
-    # update_board(translate(move))
+    until legal?(move)
+      puts "Your King is still in check."
+      puts "Please make a different move. Select a piece to move >> "
+      @selected_piece.clear
+      select_piece
+      move = translate(input_position)
+    end
+    update_board(move)
   end
 
   def select_piece
@@ -69,6 +74,7 @@ class Chess
   end
 
   def input_position # returns 'position' in Chess Notation
+    puts "Where will you move your #{selected_piece.join(' ')}? >> "
     position = gets.chomp.upcase
     until valid_end_pos?(position)
       puts "Please select a valid destination >> "
@@ -87,6 +93,7 @@ class Chess
     @board[new_pos[0]][new_pos[1]] = new_piece
 
     update_player_hash(piece, new_piece)
+    draw_board
   end
 
   def update_piece(piece, new_pos)
@@ -117,31 +124,32 @@ class Chess
 end
 
 game = Chess.new
+game.play_game
 
-game.board[5][1] = Knight.new('black', [5, 1])
-game.board[1][2] = Queen.new('black', [1, 2])
-game.board[3][3] = King.new('white', [3, 3])
-game.board[4][7] = King.new('black', [4, 7])
-game.board[0][0] = Bishop.new('black', [0, 0])
-game.board[7][0] = Rook.new('white', [7, 0])
+# game.board[5][1] = Knight.new('black', [5, 1])
+# game.board[1][2] = Queen.new('black', [1, 2])
+# game.board[3][3] = King.new('white', [3, 3])
+# game.board[4][7] = King.new('black', [4, 7])
+# game.board[0][0] = Bishop.new('black', [0, 0])
+# game.board[7][0] = Rook.new('white', [7, 0])
 
 
-game.board.each do |row|
-  row.each do |square|
-    next if square.nil?
+# game.board.each do |row|
+#   row.each do |square|
+#     next if square.nil?
 
-    if square.color == 'white'
-      game.white.has_key?(square.class) ? game.white[square.class] << square : game.white[square.class] = [square]
-    else
-      game.black.has_key?(square.class) ? game.black[square.class] << square : game.black[square.class] = [square]
-    end
-  end
-end
+#     if square.color == 'white'
+#       game.white.has_key?(square.class) ? game.white[square.class] << square : game.white[square.class] = [square]
+#     else
+#       game.black.has_key?(square.class) ? game.black[square.class] << square : game.black[square.class] = [square]
+#     end
+#   end
+# end
 
-if game.check?
-  puts "Check given by #{game.checking_piece[0].class} at #{game.checking_piece[0].square}"
-else
-  puts "Not in check."
-end
+# if game.check?
+#   puts "Check given by #{game.checking_piece[0].class} at #{game.checking_piece[0].square}"
+# else
+#   puts "Not in check."
+# end
 
-p game.make_move
+# game.make_move
