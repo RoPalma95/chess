@@ -10,8 +10,8 @@ class Chess
   include Check
   include Mate
 
-  attr_reader :board, :current_player, :selected_piece, :white, :black, :checking_piece
-  attr_writer :board, :white, :black
+  attr_reader :board, :current_player, :selected_piece, :white, :black, :checking_piece, :win
+  attr_writer :board, :white, :black, :win
 
   def initialize
     @board = Array.new(8) { Array.new(8) }
@@ -24,23 +24,28 @@ class Chess
 
   def play_game
     # intro message
-    # set_board
-    make_move
-    white.each_pair { |key, value| p "#{key} -> #{value}" }
-    black.each_pair { |key, value| p "#{key} -> #{value}" }
-  end
-
-  def set_board
-    create_pieces
-    # draw_board
+    # create_pieces
+    # make_move
+    # change_player
+    # until win == true
+    #   # draw_board
+    #   if check?
+    #     winner?
+    #   else
+    #     make_move
+    #   end
+    #   change_player
+    # end
+    # puts "#{current_player.capitalize} wins!"
   end
 
   def make_move
     puts "#{current_player.upcase}'s turn. Please select a piece to move >>"
     select_piece
     puts "Where will you move your #{selected_piece.join(' ')}? >> "
-    move = input_position
-    update_board(translate(move))
+    move = translate(input_position)
+    legal?(move)
+    # update_board(translate(move))
   end
 
   def select_piece
@@ -113,9 +118,13 @@ end
 
 game = Chess.new
 
-game.board[5][1] = Knight.new('white', [5, 1])
-game.board[1][2] = Queen.new('white', [1, 2])
-game.board[3][3] = Pawn.new('black', [3, 3])
+game.board[5][1] = Knight.new('black', [5, 1])
+game.board[1][2] = Queen.new('black', [1, 2])
+game.board[3][3] = King.new('white', [3, 3])
+game.board[4][7] = King.new('black', [4, 7])
+game.board[0][0] = Bishop.new('black', [0, 0])
+game.board[7][0] = Rook.new('white', [7, 0])
+
 
 game.board.each do |row|
   row.each do |square|
@@ -129,6 +138,10 @@ game.board.each do |row|
   end
 end
 
-# p game.white
-# p game.black
-game.play_game
+if game.check?
+  puts "Check given by #{game.checking_piece[0].class} at #{game.checking_piece[0].square}"
+else
+  puts "Not in check."
+end
+
+p game.make_move

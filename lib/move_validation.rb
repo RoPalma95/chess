@@ -64,6 +64,27 @@ module MoveValidation
     return (dest_content.nil? || dest_content.color != @current_player) ? true : false
   end
 
+  def legal?(dest, piece_square = translate(@selected_piece[1])) # is the king in check after moving
+    temp_piece = @board[piece_square[0]][piece_square[1]].dup
+    temp_checking = @checking_piece.dup unless @checking_piece.empty?
+
+    @board[piece_square[0]][piece_square[1]] = nil
+    @checking_piece.clear
+
+    test_piece = temp_piece.dup
+    test_piece.square = dest
+
+    dest_content = @board[dest[0]][dest[1]].dup
+    @board[dest[0]][dest[1]] = test_piece
+    result = check?
+
+    @board[piece_square[0]][piece_square[1]] = temp_piece
+    @board[dest[0]][dest[1]] = dest_content
+    @checking_piece = temp_checking
+
+    !result
+  end
+
   def translate(position)
     # translates CHESS NOTATION into Ruby indexes [row, col]
     position = position.reverse.split('')

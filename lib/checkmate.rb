@@ -5,18 +5,18 @@ require_relative '../lib/pieces'
 require_relative '../lib/move_validation'
 
 module Check
-  def check?(king_square)
-    # king = @current_player == 'white' ? @white[King][0] : @black[King][0]
+  def check?
+    king = @current_player == 'white' ? @white[King][0] : @black[King][0]
     # square = king.square
     # 1. check if there are any opposing rooks or queens in the same
     # row or column as the king
-    check_horizontal(king_square[0], king_square[1] - 1, king_square[1] + 1)
-    check_vertical(king_square[1], king_square[0] - 1, king_square[0] + 1)
+    check_horizontal(king.square[0], king.square[1] - 1, king.square[1] + 1)
+    check_vertical(king.square[1], king.square[0] - 1, king.square[0] + 1)
       # 2. check if there are any opposing bishops or queens in the same
       # diagonals as the king
-    check_diagonals(king_square)
+    check_diagonals(king.square)
     # 3. check if the king can be taken by an opposing knight
-    check_knights(king_square[0], king_square[1])
+    check_knights(king.square[0], king.square[1])
     !@checking_piece.empty?
   end
 
@@ -130,7 +130,10 @@ module Mate
     king = @current_player == 'white' ? @white[King][0] : @black[King][0]
     @board[king.square[0]][king.square[1]] = nil
 
-    if_king_moves?(king) && someone_block?(king)
+    mate = if_king_moves?(king) && someone_block?(king)
+    
+    @board[king.square[0]][king.square[1]] = king
+    mate
   end
 
   def if_king_moves?(king, possible = [])
@@ -141,9 +144,8 @@ module Mate
       possible << test_square[1] + King::POSSIBLE_Y[i]
 
       if !out_of_bounds?(possible) && can_take?(possible)
-        # binding.pry
         checks = @checking_piece.length
-        check?(possible)
+        check?
         next if @checking_piece.length > checks
 
         next if @checking_piece.any? do |piece|
@@ -159,7 +161,7 @@ module Mate
   def someone_block?(king)
     own_pieces = king.color == 'white' ? @white : @black
     pieces_to_block = may_be_blocked(king).compact
-    
+
     pieces_to_block.each do |piece|
       location = piece.square[1] <=> king.square[1] # location => -1: left; 0: same col; 1: right
       return block_horizontal?(king, piece, own_pieces, location) if location.nonzero? && piece.class != Bishop
