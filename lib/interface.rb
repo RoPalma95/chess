@@ -14,37 +14,20 @@ module Interface
       2. Concede. The player keeps repeating the same moves unable to remove their King's check, thus conceding defeat.
 
     Instructions:
-      * Players will decide who goes first. Whoever goes first will be in charge of the White pieces, while the other player
-        will be in charge of the Black pieces.
-      * On their turn, Players will be prompted to enter a move using the following format:
-        - They will be asked to select a piece to move. This will be done by typing the correspondig letter for each type of piece:
-          
+      * On your turn select the piece you want to move by inputting its corresponding letter:
+
             Queen --> Q or q
             King --> K or k
             Rook --> R or r
             Knight --> N or n
             Bishop --> B or b
             Pawn --> P or p
-          
-          Players will have to be certain of which piece they want to move because, once selected, they cannot change their selection.
-        
-        - After selecting a piece, the piece's current location will be asked. This location will have to be entered using the
-          following format: ColumnRow. Example: A1, refers to the piece on column A, row 1. Notice the lack of spaces in the input.
-        
-        - Next, Players will be asked to input a destination for the selected piece. This destination has to meet two criteria:
 
-          1. It can be reached by the selected piece. That is, the piece is allowed to move to the selected destination by its movement constraints.
-          2. It is a legal movement. A movement is legal if afterwards, the Player's King is not in check or no longer in check.
+      * Input the selected piece's location. Example: A1 <- references a piece in column A, row 1
 
-          If any of both criteria is not met, the Player will be asked to input a different destination. In the case that the selected move
-          is not legal, the Player will be allowed to select a different piece to move.
-        
-      * Players will alternate inputting movements until one of them is in Checkmate, making their opponent the winner.
+      * Input a destination for the selected piece
 
-      * At any point in the game, Players can choose to save the current state of the game and exiting the application by typing the letter 'S' or 's' and 
-        hitting the return key. A confirmation message will be displayed and the application will end.
-
-        Press any key to continue...
+      Press any key to continue...
     INTRODUCTION
     gets.chomp
     game_menu
@@ -52,7 +35,7 @@ module Interface
 
   def game_menu
     system('clear') || system('clr')
-    puts 'Select one of the following option to continue:'
+    puts 'Select one of the following options to continue:'
     puts "\t[N]ew Game"
     puts "\t[L]oad Game"
     mode = gets.chomp.upcase

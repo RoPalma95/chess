@@ -204,31 +204,36 @@ end
 
 class Pawn < Rook
 
-  def valid_move?(dest)
+  def valid_move?(dest, board)
     current = @square.dup
-
-    color == 'white' ? white_move(dest, current) : black_move(dest, current)
-  end
-
-  private
-
-  def white_move(dest, current)
-    if moved && dest[1] == current[1]
-      dest[0] == current[0] - 1
-    elsif !moved && dest[1] == current[1]
-      dest[0] == current[0] - 2 || dest[0] == current[0] - 1
+    # binding.pry
+    # is it moving in a straight line? (same column)
+    if current[1] == dest[1] && board[dest[0]][dest[1]].nil?
+      color == 'white' ? straight_movement(dest, current, board, -1) : straight_movement(dest, current, board, 1)
+    elsif current[0] != dest[0] && current[1] != dest[1] # is it moving diagonally
+      color == 'white' ? diagonal_movement(dest, current, board, -1) : diagonal_movement(dest, current, board, 1)
     else
       false
     end
   end
 
-  def black_move(dest, current)
-    if moved && dest[1] == current[1]
-      dest[0] == current[0] + 1
-    elsif !moved && dest[1] == current[1]
-      dest[0] == current[0] + 2 || dest[0] == current[0] + 1
+  private
+
+  def straight_movement(dest, current, board, direction)
+    if moved
+      dest[0] == current[0] + direction
+    elsif board[current[0] + direction][current[1]].nil?
+      dest[0] == current[0] + (2 * direction) || dest[0] == current[0] + direction
     else
       false
+    end
+  end
+
+  def diagonal_movement(dest, current, board, direction)
+    if board[dest[0]][dest[1]].nil?
+      false
+    elsif board[dest[0]][dest[1]].color != color
+      dest[0] == current[0] + direction && (dest[1] == current[1] + direction || dest[1] == current[1] - direction)
     end
   end
 end

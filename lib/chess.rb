@@ -4,10 +4,11 @@ require_relative '../lib/create_pieces'
 require_relative '../lib/move_validation'
 require_relative '../lib/checkmate'
 require_relative '../lib/interface'
+require_relative '../lib/save_game'
 
 class Chess
-  include CreatePieces, MoveValidation
-  include Check, Mate, Interface
+  include CreatePieces, MoveValidation, Check, Mate
+  include Interface, SaveGame
 
   attr_reader :board, :current_player, :selected_piece, :white, :black, :checking_piece, :win
   attr_writer :board, :white, :black, :win
@@ -36,16 +37,17 @@ class Chess
       make_move
       change_player
     end
-    puts "Checkmate! #{current_player.capitalize} wins!"
+    puts current_player == 'white' ? 'Checkmate! White wins!' : 'Checkmate! Black wins!'
+    sleep 1
   end
 
   def make_move
-    puts "#{current_player.upcase}'s turn. Please select a piece to move >>"
+    print "#{current_player.upcase}'s turn. Please select a piece to move >> "
     select_piece
     move = translate(input_position)
     until legal?(move)
       puts "Your King is still in check."
-      puts "Please make a different move. Select a piece to move >> "
+      print "Please make a different move. Select a piece to move >> "
       @selected_piece.clear
       select_piece
       move = translate(input_position)
@@ -56,7 +58,7 @@ class Chess
   def select_piece
     piece = gets.chomp.upcase # "piece" is a 1-character string
     until valid_piece?(piece)
-      puts 'Please select a valid piece (R, N, B, Q, K or P) >> '
+      print 'Please select a valid piece (R, N, B, Q, K or P) >> '
       piece = gets.chomp.upcase
     end
     @selected_piece << piece
@@ -64,20 +66,20 @@ class Chess
   end
 
   def initial_position(piece)
-    puts "Which #{piece} would you like to move? (Input its current square)>> "
+    print "Which #{piece} would you like to move? (Input its current square)>> "
     position = gets.chomp.upcase # "position" is a 2-characters string
     until valid_init_pos?(piece, position)
-      puts "Please select a square that contains a #{current_player} #{piece}"
+      print "Please select a square that contains a #{current_player} #{piece}>> "
       position = gets.chomp.upcase
     end
     @selected_piece << position
   end
 
   def input_position # returns 'position' in Chess Notation
-    puts "Where will you move your #{selected_piece.join(' ')}? >> "
+    print "Where will you move your #{selected_piece.join(' ')}? >> "
     position = gets.chomp.upcase
     until valid_end_pos?(position)
-      puts "Please select a valid destination >> "
+      print "Please select a valid destination >> "
       position = gets.chomp.upcase
     end
     position
@@ -128,10 +130,14 @@ game.play_game
 
 # game.board[5][1] = Knight.new('black', [5, 1])
 # game.board[1][2] = Queen.new('black', [1, 2])
-# game.board[3][3] = King.new('white', [3, 3])
+# game.board[3][3] = Pawn.new('white', [3, 3])
+# game.board[2][4] = Pawn.new('black', [2, 4])
+# game.board[2][2] = Pawn.new('black', [2, 2])
+# game.board[2][3] = Pawn.new('black', [2, 3])
 # game.board[4][7] = King.new('black', [4, 7])
 # game.board[0][0] = Bishop.new('black', [0, 0])
 # game.board[7][0] = Rook.new('white', [7, 0])
+# game.board[7][7] = King.new('white', [7, 7])
 
 
 # game.board.each do |row|
@@ -146,6 +152,8 @@ game.play_game
 #   end
 # end
 
+# game.draw_board
+# game.make_move
 # if game.check?
 #   puts "Check given by #{game.checking_piece[0].class} at #{game.checking_piece[0].square}"
 # else

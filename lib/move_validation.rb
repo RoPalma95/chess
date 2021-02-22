@@ -45,7 +45,7 @@ module MoveValidation
     piece = @board[current_pos[0]][current_pos[1]]
 
     # 2. passes the position to the piece to check if it's a valid move
-    if %w[R B Q].include?(@selected_piece[0])
+    if %w[R B Q P].include?(@selected_piece[0])
       return false unless piece.valid_move?(end_position, @board)
     else
       return false unless piece.valid_move?(end_position)

@@ -14,6 +14,7 @@ module Check
     check_vertical(king.square[1], king.square[0] - 1, king.square[0] + 1)
       # 2. check if there are any opposing bishops or queens in the same
       # diagonals as the king
+      # binding.pry
     check_diagonals(king.square)
     # 3. check if the king can be taken by an opposing knight
     check_knights(king.square[0], king.square[1])
@@ -70,7 +71,7 @@ module Check
 
   def check_ltr(ltr_up, ltr_down)
     until ltr_up.any?(&:negative?)
-      if !@board[ltr_up[0]][ltr_up[1]].nil? && @board[ltr_up[0]][ltr_up[1]].color == @current_player
+      if !@board[ltr_up[0]][ltr_up[1]].nil? && (@board[ltr_up[0]][ltr_up[1]].color == @current_player || ![Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class))
         break
       elsif [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class)
         by_who?(@board[ltr_up[0]][ltr_up[1]])
@@ -79,7 +80,7 @@ module Check
     end
 
     until ltr_down.any? { |e| e > 7 }
-      if !@board[ltr_down[0]][ltr_down[1]].nil? && @board[ltr_down[0]][ltr_down[1]].color == @current_player
+      if !@board[ltr_down[0]][ltr_down[1]].nil? && (@board[ltr_down[0]][ltr_down[1]].color == @current_player || ![Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class))
         break
       elsif [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class)
         by_who?(@board[ltr_down[0]][ltr_down[1]])
@@ -90,7 +91,7 @@ module Check
 
   def check_rtl(rtl_up, rtl_down)
     until rtl_up[0].negative? || rtl_up[1] > 7
-      if !@board[rtl_up[0]][rtl_up[1]].nil? && @board[rtl_up[0]][rtl_up[1]].color == @current_player
+      if !@board[rtl_up[0]][rtl_up[1]].nil? && (@board[rtl_up[0]][rtl_up[1]].color == @current_player || ![Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class))
         break
       elsif [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class)
         by_who?(@board[rtl_up[0]][rtl_up[1]])
@@ -99,7 +100,7 @@ module Check
     end
 
     until rtl_down[0] > 7 || rtl_down[1].negative?
-      if !@board[rtl_down[0]][rtl_down[1]].nil? && @board[rtl_down[0]][rtl_down[1]].color == @current_player
+      if !@board[rtl_down[0]][rtl_down[1]].nil? && (@board[rtl_down[0]][rtl_down[1]].color == @current_player || ![Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class))
         break
       elsif [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class)
         by_who?(@board[rtl_down[0]][rtl_down[1]])
@@ -137,7 +138,7 @@ module Mate
     mate
   end
 
-  def if_king_moves?(king, possible = [])
+  def if_king_moves?(king, possible = []) # if king moves, is he still in check?
     test_square = king.square
     
     8.times do |i|
@@ -150,7 +151,7 @@ module Mate
         next if @checking_piece.length > checks
 
         next if @checking_piece.any? do |piece|
-                  [Queen, Rook, Bishop].include?(piece.class) ? piece.valid_move?(possible, @board) : piece.valid_move?(possible)
+                  [Queen, Rook, Bishop, Pawn].include?(piece.class) ? piece.valid_move?(possible, @board) : piece.valid_move?(possible)
                 end
 
         return false
@@ -159,16 +160,16 @@ module Mate
     true
   end
 
-  def someone_block?(king)
+  def someone_block?(king) # if someone blocks, is king still in check?
     own_pieces = king.color == 'white' ? @white : @black
     pieces_to_block = may_be_blocked(king).compact
 
     pieces_to_block.each do |piece|
       location = piece.square[1] <=> king.square[1] # location => -1: left; 0: same col; 1: right
-      return block_horizontal?(king, piece, own_pieces, location) if location.nonzero? && piece.class != Bishop
+      return block_horizontal?(king, piece, own_pieces, location) if location.nonzero? && ![Bishop, Queen].include?(piece.class)
 
       location = piece.square[0] <=> king.square[0] # location => -1: above; 0: same row; 1: below
-      return block_vertical?(king, piece, own_pieces, location) if location.nonzero? && piece.class != Bishop
+      return block_vertical?(king, piece, own_pieces, location) if location.nonzero? && ![Bishop, Queen].include?(piece.class)
 
       return block_diagonal?(king, piece, own_pieces, location)
     end
@@ -229,7 +230,7 @@ module Mate
           next if p_class == King
 
           return false if pieces.any? do |piece|
-                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
+                            [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move?([row, k_col])
                           end
 
         end
@@ -242,7 +243,7 @@ module Mate
           next if p_class == King
 
           return false if pieces.any? do |piece|
-                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move([row, k_col])
+                            [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([row, k_col], @board) : piece.valid_move?([row, k_col])
                           end
 
         end
@@ -263,7 +264,7 @@ module Mate
           next if p_class == King
 
           return false if pieces.any? do |piece|
-                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
+                            [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move?([k_row, col])
                           end
 
         end
@@ -276,7 +277,7 @@ module Mate
           next if p_class == King
 
           return false if pieces.any? do |piece|
-                            [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move([k_row, col])
+                            [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([k_row, col], @board) : piece.valid_move?([k_row, col])
                           end
 
         end
@@ -301,7 +302,7 @@ module Mate
             next if p_class == King
 
             return false if pieces.any? do |piece|
-                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                              [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
                             end
           end
           row, col = [row - 1, col - 1]
@@ -313,7 +314,7 @@ module Mate
             next if p_class == King
 
             return false if pieces.any? do |piece|
-                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                              [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
                             end
           end
           row, col = [row + 1, col + 1]
@@ -327,7 +328,7 @@ module Mate
             next if p_class == King
 
             return false if pieces.any? do |piece|
-                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                              [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
                             end
           end
           row, col = [row - 1, col + 1]
@@ -339,7 +340,7 @@ module Mate
             next if p_class == King
 
             return false if pieces.any? do |piece|
-                              [Queen, Rook, Bishop].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
+                              [Queen, Rook, Bishop, Pawn].include?(p_class) ? piece.valid_move?([row, col], @board) : piece.valid_move?([row, col])
                             end
           end
           row, col = [row + 1, col - 1]
