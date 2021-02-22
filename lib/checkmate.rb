@@ -5,19 +5,19 @@ require_relative '../lib/pieces'
 require_relative '../lib/move_validation'
 
 module Check
-  def check?
+  def check?(k_square = nil)
     king = @current_player == 'white' ? @white[King][0] : @black[King][0]
-    # square = king.square
+    square = k_square.nil? ? king.square : k_square
     # 1. check if there are any opposing rooks or queens in the same
     # row or column as the king
-    check_horizontal(king.square[0], king.square[1] - 1, king.square[1] + 1)
-    check_vertical(king.square[1], king.square[0] - 1, king.square[0] + 1)
+    check_horizontal(square[0], square[1] - 1, square[1] + 1)
+    check_vertical(square[1], square[0] - 1, square[0] + 1)
       # 2. check if there are any opposing bishops or queens in the same
       # diagonals as the king
       # binding.pry
-    check_diagonals(king.square)
+    check_diagonals(square)
     # 3. check if the king can be taken by an opposing knight
-    check_knights(king.square[0], king.square[1])
+    check_knights(square[0], square[1])
     # binding.pry
     !@checking_piece.empty?
   end
@@ -28,7 +28,7 @@ module Check
     until left.negative?
       if !@board[row][left].nil? && @board[row][left].color == @current_player
         break
-      elsif [Rook, Queen].include?(@board[row][left].class)
+      elsif [Rook, Queen].include?(@board[row][left].class) && @board[row][left].color != @current_player
         by_who?(@board[row][left])
       end
       left -= 1
@@ -37,7 +37,7 @@ module Check
     until right > 7
       if !@board[row][right].nil? && @board[row][right].color == @current_player
         break
-      elsif [Rook, Queen].include?(@board[row][right].class)
+      elsif [Rook, Queen].include?(@board[row][right].class) && @board[row][right].color != @current_player
         by_who?(@board[row][right])
       end
       right += 1
@@ -48,7 +48,7 @@ module Check
     until up.negative?
       if !@board[up][col].nil? && @board[up][col].color == @current_player
         break
-      elsif [Rook, Queen].include?(@board[up][col].class)
+      elsif [Rook, Queen].include?(@board[up][col].class) && @board[up][col].color != @current_player
         by_who?(@board[up][col])
       end
       up -= 1
@@ -57,7 +57,7 @@ module Check
     until down > 7
       if !@board[down][col].nil? && @board[down][col].color == @current_player
         break
-      elsif [Rook, Queen].include?(@board[down][col].class)
+      elsif [Rook, Queen].include?(@board[down][col].class) && @board[down][col].color != @current_player
         by_who?(@board[down][col])
       end
       down += 1
@@ -73,7 +73,7 @@ module Check
     until ltr_up.any?(&:negative?)
       if !@board[ltr_up[0]][ltr_up[1]].nil? && (@board[ltr_up[0]][ltr_up[1]].color == @current_player || ![Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class))
         break
-      elsif [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class)
+      elsif [Bishop, Queen].include?(@board[ltr_up[0]][ltr_up[1]].class) && @board[ltr_up[0]][ltr_up[1]].color != @current_player
         by_who?(@board[ltr_up[0]][ltr_up[1]])
       end
       ltr_up.map! { |element| element - 1 }
@@ -82,7 +82,7 @@ module Check
     until ltr_down.any? { |e| e > 7 }
       if !@board[ltr_down[0]][ltr_down[1]].nil? && (@board[ltr_down[0]][ltr_down[1]].color == @current_player || ![Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class))
         break
-      elsif [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class)
+      elsif [Bishop, Queen].include?(@board[ltr_down[0]][ltr_down[1]].class) && @board[ltr_down[0]][ltr_down[1]].color != @current_player
         by_who?(@board[ltr_down[0]][ltr_down[1]])
       end
       ltr_down.map! { |element| element + 1 }
@@ -93,7 +93,7 @@ module Check
     until rtl_up[0].negative? || rtl_up[1] > 7
       if !@board[rtl_up[0]][rtl_up[1]].nil? && (@board[rtl_up[0]][rtl_up[1]].color == @current_player || ![Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class))
         break
-      elsif [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class)
+      elsif [Bishop, Queen].include?(@board[rtl_up[0]][rtl_up[1]].class) && @board[rtl_up[0]][rtl_up[1]].color != @current_player
         by_who?(@board[rtl_up[0]][rtl_up[1]])
       end
       rtl_up = [rtl_up[0] - 1, rtl_up[1] + 1]
@@ -102,7 +102,7 @@ module Check
     until rtl_down[0] > 7 || rtl_down[1].negative?
       if !@board[rtl_down[0]][rtl_down[1]].nil? && (@board[rtl_down[0]][rtl_down[1]].color == @current_player || ![Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class))
         break
-      elsif [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class)
+      elsif [Bishop, Queen].include?(@board[rtl_down[0]][rtl_down[1]].class) && @board[rtl_down[0]][rtl_down[1]].color != @current_player
         by_who?(@board[rtl_down[0]][rtl_down[1]])
       end
       rtl_down = [rtl_down[0] + 1, rtl_down[1] - 1]
@@ -129,6 +129,7 @@ end
 
 module Mate
   def checkmate?
+
     king = @current_player == 'white' ? @white[King][0] : @black[King][0]
     @board[king.square[0]][king.square[1]] = nil
 
@@ -140,14 +141,14 @@ module Mate
 
   def if_king_moves?(king, possible = []) # if king moves, is he still in check?
     test_square = king.square
-    
+
     8.times do |i|
       possible.clear << test_square[0] + King::POSSIBLE_X[i]
       possible << test_square[1] + King::POSSIBLE_Y[i]
 
       if !out_of_bounds?(possible) && can_take?(possible)
         checks = @checking_piece.length
-        check?
+        check?(possible)
         next if @checking_piece.length > checks
 
         next if @checking_piece.any? do |piece|

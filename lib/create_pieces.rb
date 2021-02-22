@@ -1,9 +1,7 @@
 
 require_relative '../lib/pieces'
-require_relative '../lib/interface'
 
 module CreatePieces
-  include Interface
 
   def create_pieces
     create_pawns
@@ -13,7 +11,6 @@ module CreatePieces
     create_queens
     create_kings
     track_pieces
-    draw_board
   end
 
   def create_pawns

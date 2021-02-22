@@ -21,6 +21,8 @@ class Rook
   end
 
   def empty_path?(dest, board)
+    return false if dest == @square
+
     dest_row, dest_col = dest
     current_row, current_col = @square
     if dest_col == current_col # rook moves vertically

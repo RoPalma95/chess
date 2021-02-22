@@ -8,10 +8,9 @@ require_relative '../lib/save_game'
 
 class Chess
   include CreatePieces, MoveValidation, Check, Mate
-  include Interface, SaveGame
+  include Interface, SaveAndLoad
 
-  attr_reader :board, :current_player, :selected_piece, :white, :black, :checking_piece, :win
-  attr_writer :board, :white, :black, :win
+  attr_accessor :board, :current_player, :selected_piece, :white, :black, :checking_piece
 
   def initialize
     @board = Array.new(8) { Array.new(8) }
@@ -23,9 +22,9 @@ class Chess
   end
 
   def play_game
-    introduction
-    create_pieces
-    make_move
+    create_pieces unless introduction == 'loaded'
+    draw_board
+    return save_game if make_move == 'S'
     change_player
     loop do
       if check?
@@ -34,16 +33,17 @@ class Chess
         end
         puts "#{current_player} is in Check!"
       end
-      make_move
+      return save_game if make_move == 'S'
       change_player
     end
-    puts current_player == 'white' ? 'Checkmate! White wins!' : 'Checkmate! Black wins!'
+    puts current_player == 'white' ? 'Checkmate! Black wins!' : 'Checkmate! White wins!'
     sleep 1
   end
 
   def make_move
     print "#{current_player.upcase}'s turn. Please select a piece to move >> "
-    select_piece
+    return 'S' if select_piece == 'S'
+
     move = translate(input_position)
     until legal?(move)
       puts "Your King is still in check."
@@ -57,6 +57,8 @@ class Chess
 
   def select_piece
     piece = gets.chomp.upcase # "piece" is a 1-character string
+    return piece if piece == 'S'
+
     until valid_piece?(piece)
       print 'Please select a valid piece (R, N, B, Q, K or P) >> '
       piece = gets.chomp.upcase
@@ -122,6 +124,7 @@ class Chess
   def change_player
     @current_player = current_player == 'white' ? 'black' : 'white'
     @selected_piece.clear
+    @checking_piece.clear
   end
 end
 

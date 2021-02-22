@@ -1,6 +1,7 @@
+
 require 'pry'
 
-module MoveValidation
+module MoveValidation 
   COL_LETTERS = %w[A B C D E F G H].freeze
   PIECES = {
     'R' => Rook,
@@ -68,15 +69,16 @@ module MoveValidation
 
     @board[piece_square[0]][piece_square[1]] = nil
     @checking_piece.clear
-
+    # binding.pry
     test_piece = temp_piece.dup
-    test_piece.square = dest
+    test_piece = update_piece(test_piece, dest) # test_piece.square = dest
 
     dest_content = @board[dest[0]][dest[1]].dup
     @board[dest[0]][dest[1]] = test_piece
-    result = check?
 
-    @board[piece_square[0]][piece_square[1]] = temp_piece
+    result = test_piece.class == King ? check?(dest) : check?
+
+    @board[piece_square[0]][piece_square[1]] = update_piece(temp_piece, piece_square)
     @board[dest[0]][dest[1]] = dest_content
     @checking_piece = temp_checking unless temp_checking.nil?
 

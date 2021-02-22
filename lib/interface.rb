@@ -1,5 +1,6 @@
 
 require 'rainbow'
+require_relative '../lib/save_game'
 
 module Interface
   def introduction
@@ -27,6 +28,8 @@ module Interface
 
       * Input a destination for the selected piece
 
+      * If you'd like to save the game, type 's' or 'S' at the start of your turn
+
       Press any key to continue...
     INTRODUCTION
     gets.chomp
@@ -42,12 +45,14 @@ module Interface
     if mode == 'N'
       return
     else
-      load_game
+      load_game('chess_saved_game.yaml')
+      return 'loaded'
     end
   end
 
   def draw_board
     system('clear') || system('clr')
+    puts "[S]ave and quit"
     puts "\n"
     print "\t   A     B     C     D     E     F     G     H"
     puts "\n\n"
